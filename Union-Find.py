@@ -1,5 +1,5 @@
 class UnionFind:
-    def __init__(self, n: int):
+    def __init__(self, n: int) -> None:
         self.n = n
         self.parent = [-1] * n
         self.groups = n
@@ -11,38 +11,41 @@ class UnionFind:
             self.parent[x] = self.find(self.parent[x])
             return self.parent[x]
 
-    def union(self, x: int, y: int) -> None:
+    def union(self, x: int, y: int) -> bool:
         x = self.find(x)
         y = self.find(y)
         if x == y:
-            return
+            return False
         if self.parent[x] > self.parent[y]:
             x, y = y, x
         self.parent[x] += self.parent[y]
         self.parent[y] = x
         self.groups -= 1
+        return True
 
-    def union_right(self, x: int, y: int) -> None:
+    def union_right(self, x: int, y: int) -> bool:
         if y > x:
             x, y = y, x
         x = self.find(x)
         y = self.find(y)
         if x == y:
-            return
+            return False
         self.parent[x] += self.parent[y]
         self.parent[y] = x
         self.groups -= 1
+        return True
 
-    def union_left(self, x: int, y: int) -> None:
+    def union_left(self, x: int, y: int) -> bool:
         if x > y:
             x, y = y, x
         x = self.find(x)
         y = self.find(y)
         if x == y:
-            return
+            return False
         self.parent[x] += self.parent[y]
         self.parent[y] = x
         self.groups -= 1
+        return True
 
     def size(self, x: int) -> int:
         return -self.parent[self.find(x)]
@@ -50,34 +53,35 @@ class UnionFind:
     def same(self, x: int, y: int) -> bool:
         return self.find(x) == self.find(y)
 
-    def members(self, x: int):
+    def members(self, x: int) -> list:
         root = self.find(x)
         return [i for i in range(self.n) if self.find(i) == root]
 
-    def roots(self):
+    def roots(self) -> list:
         return [i for i, x in enumerate(self.parent) if x < 0]
 
     def group_count(self) -> int:
         # return len(self.roots())
         return self.groups
 
-    def sizes(self):
+    def sizes(self) -> dict:
         return {i: -x for i, x in enumerate(self.parent) if x < 0}
 
-    def all_group_members(self):
-        d = {}
+    def all_group_members(self) -> dict:
+        from collections import defaultdict
+        d = defaultdict(list)
         for i in range(self.n):
             p = self.find(i)
-            d[p] = d.get(p, []) + [i]
+            d[p].append(i)
         return d
 
-    def __str__(self):
+    def __str__(self) -> str:
         return '\n'.join('{}: {}'.format(k, v) for k, v in self.all_group_members().items())
 
 
 class PartiallyPersistentUnionFind:
     # 部分永続UnionFind
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         self.INF = float("inf")
         self.n = n
         self.parent = list(range(self.n))
@@ -86,16 +90,16 @@ class PartiallyPersistentUnionFind:
         self.S = [[(0, 1)] for _ in range(self.n)]
         self.T = [self.INF] * self.n
 
-    def find(self, x, t):
+    def find(self, x, t) -> int:
         while self.T[x] <= t:
             x = self.parent[x]
         return x
 
-    def union(self, x, y, t):
+    def union(self, x, y, t) -> bool:
         px = self.find(x, t)
         py = self.find(y, t)
         if px == py:
-            return 0
+            return False
         if self.pdepth[py] < self.pdepth[px]:
             self.parent[py] = px
             self.T[py] = t
@@ -107,27 +111,27 @@ class PartiallyPersistentUnionFind:
             self.sz[py] += self.sz[px]
             self.S[py].append((t, self.sz[py]))
             self.pdepth[py] = max(self.pdepth[py], self.pdepth[px] + 1)
-        return 1
+        return True
 
-    def size(self, x, t):
+    def size(self, x, t) -> int:
         from bisect import bisect_right
         y = self.find(x, t)
         idx = bisect_right(self.S[y], (t, self.INF)) - 1
         return self.S[y][idx]
 
-    def same(self, x, y, t):
+    def same(self, x, y, t) -> bool:
         return self.find(x, t) == self.find(y, t)
 
 
 class WeightedUnionFind:
     # ポテンシャル付きUnionFind
-    def __init__(self, n):
+    def __init__(self, n) -> None:
         self.n = n
         self.parent = list(range(n + 1))
         self.rank = [0] * (n + 1)
         self.weight = [0] * (n + 1)
 
-    def find(self, x):
+    def find(self, x) -> int:
         if self.parent[x] == x:
             return x
         else:
@@ -136,38 +140,40 @@ class WeightedUnionFind:
             self.parent[x] = y
             return y
 
-    def union(self, x, y, w):
+    def union(self, x, y, w) -> bool:
         # weight(y)=weight(x)+wとなるようにxとyをマージする
         px = self.find(x)
         py = self.find(y)
         if px == py:
-            return
+            return False
         if self.rank[px] > self.rank[py]:
             px, py, w = py, px, -w
         self.parent[px] = py
         self.weight[px] = w - self.weight[x] + self.weight[y]
         if self.rank[px] == self.rank[py]:
             self.rank[py] += 1
+        return True
 
-    def same(self, x, y):
+    def same(self, x, y) -> bool:
         return self.find(x) == self.find(y)
 
-    def diff(self, x, y):
+    def diff(self, x, y) -> int:
         # xからyへのコスト
         if self.same(x, y):
             return self.weight[x] - self.weight[y]
         else:
             return None
 
-    def all_group_members(self):
-        d = {}
-        w = {}
+    def all_group_members(self) -> tuple:
+        from collections import defaultdict
+        d = defaultdict(list)
+        w = defaultdict(list)
         for i in range(self.n):
             p = self.find(i)
-            d[p] = d.get(p, []) + [i]
-            w[p] = w.get(p, []) + [self.weight[i]]
+            d[p].append(i)
+            w[p].append(self.weight[i])
         return d, w
 
-    def __str__(self):
+    def __str__(self) -> str:
         d, w = self.all_group_members()
         return '\n'.join('{}: {} : {}'.format(k, v, x) for (k, v), (_, x) in zip(d.items(), w.items()))
