@@ -1,7 +1,12 @@
 class BIT():
-    def __init__(self, n):
-        self.n = n
-        self.data = [0] * n
+    def __init__(self, init_val):
+        if hasattr(init_val, "__iter__"):
+            self.n = len(init_val)
+            self.data = [0] * self.n
+            self.build(init_val)
+        else:
+            self.n = init_val
+            self.data = [0] * self.n
 
     def build(self, arr):
         # 配列arrからBITを構築する
@@ -27,7 +32,7 @@ class BIT():
             r -= r & -r
         return s
 
-    def range_sum(self, l, r):
+    def query(self, l, r):
         # assert 0 <= l <= r <= self.n
         return self.sum(r) - self.sum(l)
 
@@ -66,5 +71,5 @@ class BIT2:
             i += i & -i
 
     # [x0, x1) x [y0, y1)
-    def range_sum(self, x0, x1, y0, y1):
+    def query(self, x0, x1, y0, y1):
         return self.sum(x1, y1) - self.sum(x1, y0) - self.sum(x0, y1) + self.sum(x0, y0)
