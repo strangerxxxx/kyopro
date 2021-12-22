@@ -8,8 +8,12 @@ class UnionFind:
         if self.parent[x] < 0:
             return x
         else:
-            self.parent[x] = self.find(self.parent[x])
-            return self.parent[x]
+            p = x
+            while self.parent[p] >= 0:
+                p = self.parent[p]
+            while self.parent[x] >= 0:
+                self.parent[x], x = p, self.parent[x]
+            return p
 
     def union(self, x: int, y: int) -> bool:
         x = self.find(x)
@@ -61,7 +65,6 @@ class UnionFind:
         return [i for i, x in enumerate(self.parent) if x < 0]
 
     def group_count(self) -> int:
-        # return len(self.roots())
         return self.groups
 
     def sizes(self) -> dict:
@@ -135,10 +138,14 @@ class WeightedUnionFind:
         if self.parent[x] == x:
             return x
         else:
-            y = self.find(self.parent[x])
-            self.weight[x] += self.weight[self.parent[x]]
-            self.parent[x] = y
-            return y
+            q = []
+            while self.parent[x] != x:
+                q.append(x)
+                x = self.parent[x]
+            for i in reversed(q):
+                self.weight[i] += self.weight[self.parent[i]]
+                self.parent[i] = x
+            return x
 
     def union(self, x, y, w) -> bool:
         # weight(y)=weight(x)+wとなるようにxとyをマージする
