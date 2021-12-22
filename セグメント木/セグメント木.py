@@ -66,7 +66,11 @@ class SegmentTree:
             r >>= 1
         return res
 
-    def get(self, l: int = 0, r: int = None) -> list:
+    def get(self, index: int) -> int:
+        # assert 0 <= index < self.n
+        return self.tree[index + self.n]
+
+    def get_list(self, l: int = 0, r: int = None) -> list:
         # assert 0 <= l < self.n
         if r is None:
             r = self.n
