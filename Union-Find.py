@@ -147,7 +147,7 @@ class WeightedUnionFind:
         if px == py:
             return False
         if self.rank[px] > self.rank[py]:
-            px, py, w = py, px, -w
+            x, y, px, py, w = y, x, py, px, -w
         self.parent[px] = py
         self.weight[px] = w - self.weight[x] + self.weight[y]
         if self.rank[px] == self.rank[py]:
