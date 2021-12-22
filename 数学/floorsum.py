@@ -1,4 +1,4 @@
-def floor_sum(n, m, a, b):
+def floor_sum(n: int, m: int, a: int, b: int) -> int:
     '''
     Σ[0, n-1]((a*i+b)//m)
     ref: https://qiita.com/R_olldIce/items/3e2c80baa6d5e6f3abe9
