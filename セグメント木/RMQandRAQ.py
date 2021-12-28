@@ -6,7 +6,7 @@ class RMQandRAQ:
     get(l, r)    : 区間[l, r)の配列を求める
     """
 
-    def __init__(self, n, default=0, function=min, element=float("inf")):
+    def __init__(self, init_val, function=min, element=float("inf"), default: int = 0):
         """
         default: 配列の初期値
         function: 区間にしたい操作
@@ -15,18 +15,24 @@ class RMQandRAQ:
         data: 値配列(1-index)
         lazy: 遅延配列(1-index)
         """
-        self.n = n
-        init_val = [default] * n
+        if hasattr(init_val, "__iter__"):
+            self.n = len(init_val)
+        else:
+            self.n = init_val
         self.function = function
         self.element = element
-        self.num = 1 << (n - 1).bit_length()
+        self.num = 1 << (self.n - 1).bit_length()
         self.data = [element] * 2 * self.num
         self.lazy = [0] * 2 * self.num
-        for i in range(n):
-            self.data[self.num + i] = init_val[i]
+        if hasattr(init_val, "__iter__"):
+            for i, j in enumerate(init_val):
+                self.data[self.num + i] = j
+        else:
+            for i in range(self.n):
+                self.data[self.num + i] = default
         for i in range(self.num - 1, 0, -1):
             self.data[i] = self.function(
-                self.data[2 * i], self.data[2 * i + 1])
+                self.data[i << 1], self.data[i << 1 | 1])
 
     def gindex(self, l, r):
         """
@@ -59,10 +65,10 @@ class RMQandRAQ:
             v = self.lazy[i]
             if not v:
                 continue
-            self.lazy[2 * i] += v
-            self.lazy[2 * i + 1] += v
-            self.data[2 * i] += v
-            self.data[2 * i + 1] += v
+            self.lazy[i << 1] += v
+            self.lazy[i << 1 | 1] += v
+            self.data[i << 1] += v
+            self.data[i << 1 | 1] += v
             self.lazy[i] = 0
 
     def add(self, l, r, x):
@@ -86,7 +92,7 @@ class RMQandRAQ:
             l >>= 1
         for i in ids:
             self.data[i] = self.function(
-                self.data[2 * i], self.data[2 * i + 1]) + self.lazy[i]
+                self.data[i << 1], self.data[i << 1 | 1]) + self.lazy[i]
 
     def query(self, l, r):
         """
@@ -116,103 +122,6 @@ class RMQandRAQ:
         [l, r)の配列を返す
         l: index(0-index)
         r: index(0-index)
-        """
-        if r is None:
-            r = self.n
-        return [self.query(x, x + 1) for x in range(l, r)]
-
-
-class RMQandRAQ2:
-    """
-    Range Minimum Query and Range Add Query
-    add(l, r, x) : 区間[l, r)にxを加算する
-    query(l, r)  : 区間[l, r)内にfunctionを適用したものを求める
-    get(l, r)  : 区間[l, r)の配列を求める
-    """
-
-    def __init__(self, n, function=min, element=float("inf"), default: int = 0):
-        self.n = n
-        self.LV = (self.n - 1).bit_length()
-        self.N0 = 1 << self.LV
-        self.data = [default] * (2 * self.N0)
-        self.lazy = [None] * (2 * self.N0)
-        self.function = function
-        self.element = element
-
-    def gindex(self, l, r):
-        L = (l + self.N0) >> 1
-        R = (r + self.N0) >> 1
-        lc = 0 if l & 1 else (L & -L).bit_length()
-        rc = 0 if r & 1 else (R & -R).bit_length()
-        for i in range(self.LV):
-            if rc <= i:
-                yield R
-            if L < R and lc <= i:
-                yield L
-            L >>= 1
-            R >>= 1
-
-    def propagates(self, *ids):
-        """
-        遅延伝搬処理
-        """
-        for i in reversed(ids):
-            v = self.lazy[i - 1]
-            if not v:
-                continue
-            self.lazy[2 * i - 1] += v
-            self.lazy[2 * i] += v
-            self.data[2 * i - 1] += v
-            self.data[2 * i] += v
-            self.lazy[i - 1] = 0
-
-    def add(self, l, r, x):
-        """
-        区間[l, r)にxを加算
-        """
-        *ids, = self.gindex(l, r)
-        self.propagates(*ids)
-
-        L = self.N0 + l
-        R = self.N0 + r
-        while L < R:
-            if R & 1:
-                R -= 1
-                self.lazy[R - 1] += x
-                self.data[R - 1] += x
-            if L & 1:
-                self.lazy[L - 1] += x
-                self.data[L - 1] += x
-                L += 1
-            L >>= 1
-            R >>= 1
-        for i in ids:
-            self.data[i - 1] = \
-                self.function(self.data[2 * i - 1], self.data[2 * i])
-
-    def query(self, l, r):
-        """
-        区間[l, r)内にfunctionを適用したものを求める
-        """
-        self.propagates(*self.gindex(l, r))
-        L = self.N0 + l
-        R = self.N0 + r
-
-        s = self.element
-        while L < R:
-            if R & 1:
-                R -= 1
-                s = self.function(s, self.data[R - 1])
-            if L & 1:
-                s = self.function(s, self.data[L - 1])
-                L += 1
-            L >>= 1
-            R >>= 1
-        return s
-
-    def get(self, l=0, r=None):
-        """
-        [l, r)の配列を返す
         """
         if r is None:
             r = self.n
