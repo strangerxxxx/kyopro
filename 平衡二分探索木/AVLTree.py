@@ -114,7 +114,7 @@ class AVLTree:
             同じキーがあった場合は上書きする。
 
         """
-        if val == None:
+        if val is None:
             val = copy.deepcopy(self.default)
         if self.root is None:
             self.root = Node(key, val)
@@ -270,7 +270,7 @@ class AVLTree:
 
         return True
 
-    def member(self, key):
+    def contains(self, key):
         """キーの存在チェック
 
         指定したkeyがあるかどうか判定する。
@@ -292,7 +292,7 @@ class AVLTree:
                 return True
         return False
 
-    def getval(self, key):
+    def get(self, key):
         """値の取り出し
 
         指定したkeyの値を返す。
@@ -395,7 +395,7 @@ class AVLTree:
         while True:
             ret = v
             v = v.lch
-            if v == None:
+            if v is None:
                 break
         return ret.key
 
@@ -411,7 +411,7 @@ class AVLTree:
         while True:
             ret = v
             v = v.rch
-            if v == None:
+            if v is None:
                 break
         return ret.key
 
@@ -428,7 +428,7 @@ class AVLTree:
         while True:
             ret = v
             v = v.lch
-            if v == None:
+            if v is None:
                 break
         del self[ret.key]
         return ret.key
@@ -446,7 +446,7 @@ class AVLTree:
         while True:
             ret = v
             v = v.rch
-            if v == None:
+            if v is None:
                 break
         del self[ret.key]
         return ret.key
@@ -490,10 +490,10 @@ class AVLTree:
         return self.keys()
 
     def __contains__(self, key):
-        return self.member(key)
+        return self.contains(key)
 
     def __getitem__(self, key):
-        return self.getval(key)
+        return self.get(key)
 
     def __setitem__(self, key, val):
         return self.insert(key, val)
