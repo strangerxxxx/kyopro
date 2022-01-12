@@ -1,4 +1,4 @@
-from typing import NamedTuple, Optional, List, cast
+from typing import NamedTuple, Optional, List, cast, Tuple
 
 
 class MFGraph:
@@ -20,9 +20,9 @@ class MFGraph:
         self._edges: List[MFGraph._Edge] = []
 
     def add_edge(self, src: int, dst: int, cap: int = 1) -> int:
-        assert 0 <= src < self._n
-        assert 0 <= dst < self._n
-        assert 0 <= cap
+        # assert 0 <= src < self._n
+        # assert 0 <= dst < self._n
+        # assert 0 <= cap
         m = len(self._edges)
         e = MFGraph._Edge(dst, cap)
         re = MFGraph._Edge(src, 0)
@@ -35,7 +35,7 @@ class MFGraph:
 
     def get_edge(self, i: int) -> Edge:
         # i番目に張られた辺を返す O(1)
-        assert 0 <= i < len(self._edges)
+        # assert 0 <= i < len(self._edges)
         e = self._edges[i]
         re = cast(MFGraph._Edge, e.rev)
         return MFGraph.Edge(re.dst, e.dst, e.cap + re.cap, re.cap)
@@ -46,18 +46,18 @@ class MFGraph:
 
     def change_edge(self, i: int, new_cap: int, new_flow: int) -> None:
         # i番目に張られた辺をnew_cap、new_flowに変更する O(1)
-        assert 0 <= i < len(self._edges)
-        assert 0 <= new_flow <= new_cap
+        # assert 0 <= i < len(self._edges)
+        # assert 0 <= new_flow <= new_cap
         e = self._edges[i]
         e.cap = new_cap - new_flow
-        assert e.rev is not None
+        # assert e.rev is not None
         e.rev.cap = new_flow
 
     def flow(self, s: int, t: int, flow_limit: Optional[int] = None) -> int:
         # s->tへflow_limitの範囲で流せた量を返す O(n^2 m)
-        assert 0 <= s < self._n
-        assert 0 <= t < self._n
-        assert s != t
+        # assert 0 <= s < self._n
+        # assert 0 <= t < self._n
+        # assert s != t
         if flow_limit is None:
             flow_limit = cast(int, sum(e.cap for e in self._g[s]))
 
@@ -97,7 +97,7 @@ class MFGraph:
                     flow = min(lim, min(e.cap for e in edge_stack))
                     for e in edge_stack:
                         e.cap -= flow
-                        assert e.rev is not None
+                        # assert e.rev is not None
                         e.rev.cap += flow
                     return flow
                 next_level = level[v] - 1
@@ -143,41 +143,57 @@ class MFGraph:
         return visited
 
 
-class BipartiteMatching(MFGraph):
-    class Edge(NamedTuple):
-        src: int
-        dst: int
-        cap: int
-        flow: int
+class BipartiteMatching:
+    '''
+    軽量化Dinic法
+    ref : https://snuke.hatenablog.com/entry/2019/05/07/013609
+    from typing import List, Tuple
+    '''
 
-    class _Edge:
-        def __init__(self, dst: int, cap: int) -> None:
-            self.dst = dst
-            self.cap = cap
-            self.rev: Optional[MFGraph._Edge] = None
+    def __init__(self, n: int, m: int) -> None:
+        self._n = n
+        self._m = m
+        self._to: List[List[int]] = [[] for _ in range(n)]
 
-    def __init__(self, a: int, b: int) -> None:
-        self.a = a
-        self.b = b
-        self.start = a + b + 1
-        self.goal = self.start + 1
-        super().__init__(self.goal + 1)
-        for i in range(self.a):
-            super().add_edge(self.start, i)
-        for i in range(self.a, self.a + self.b):
-            super().add_edge(i, self.goal)
+    def add_edge(self, a: int, b: int) -> None:
+        self._to[a].append(b)
 
-    def add_edge(self, src: int, dst: int, cap: int = 1) -> int:
-        assert 0 <= src < self.a
-        assert 0 <= dst < self.b
-        return super().add_edge(src, self.a + dst, cap)
-
-    def edges(self) -> List[Edge]:
-        return [x._replace(dst=x.dst - self.a) for x in super().edges() if x.src !=
-                self.start and x.dst != self.goal]
-
-    def flow(self,  flow_limit: Optional[int] = None) -> int:
-        return super().flow(self.start, self.goal, flow_limit=flow_limit)
+    def solve(self) -> List[Tuple[int, int]]:
+        n, m, to = self._n, self._m, self._to
+        pre = [-1] * n
+        root = [-1] * n
+        p = [-1] * n
+        q = [-1] * m
+        upd = True
+        while upd:
+            upd = False
+            s = [i for i, x in enumerate(p) if x == -1]
+            for i in s:
+                root[i] = i
+            s_front = 0
+            while s_front < len(s):
+                v = s[s_front]
+                s_front += 1
+                if p[root[v]] != -1:
+                    continue
+                for u in to[v]:
+                    if q[u] == -1:
+                        while u != -1:
+                            q[u] = v
+                            p[v], u = u, p[v]
+                            v = pre[v]
+                        upd = True
+                        break
+                    u = q[u]
+                    if pre[u] != -1:
+                        continue
+                    pre[u] = v
+                    root[u] = root[v]
+                    s.append(u)
+            if upd:
+                pre = [-1] * n
+                root = [-1] * n
+        return [(v, p[v]) for v in range(n) if p[v] != -1]
 
 
 def scipy_maximunflow():
@@ -197,5 +213,8 @@ def scipy_maximunflow():
     print(graph)
     print(maximum_flow(graph, 0, 5).flow_value)
     print(maximum_flow(graph, 0, 5).residual)
-    print(maximum_bipartite_matching(graph, perm_type='column'))
+    # print(maximum_bipartite_matching(
+    #     graph, perm_type='column'))  # scipy1.4.1はバグあり
+    # ans = [(i, x)
+    #        for i, x in enumerate(maximum_bipartite_matching(graph, perm_type='column')) if x >= 0]
 # scipy_maximunflow()
