@@ -48,3 +48,14 @@ def pertitions(a):
         for i in range(l + 1, len(a)):
             q.append((i, res + [a[l:i]]))
         yield res + [a[l:]]
+
+
+def bits(n: int):
+    for j in range(1 << n):
+        yield [j >> i & 1 for i in range(n)]
+
+
+def powerset(a):
+    n = len(a)
+    for j in range(1 << n):
+        yield [x for i, x in enumerate(a) if j >> i & 1]
