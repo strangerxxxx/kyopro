@@ -41,7 +41,7 @@ def prev_permutation(a: list, l: int = 0, r: int = None) -> bool:
     return False
 
 
-def pertitions(a):
+def partitions(a):
     q = [(0, [])]
     while q:
         l, res = q.pop()
