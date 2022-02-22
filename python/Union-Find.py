@@ -71,15 +71,18 @@ class UnionFind:
         return {i: -x for i, x in enumerate(self.parent) if x < 0}
 
     def all_group_members(self) -> dict:
-        from collections import defaultdict
-        d = defaultdict(list)
+        d = {}
         for i in range(self.n):
             p = self.find(i)
-            d[p].append(i)
+            if p in d:
+                d[p].append(i)
+            else:
+                d[p] = [i]
         return d
 
     def __str__(self) -> str:
-        return '\n'.join('{}: {}'.format(k, v) for k, v in self.all_group_members().items())
+        return '\n'.join('{}: {}'.format(k, v)
+                         for k, v in self.all_group_members().items())
 
 
 class PartiallyPersistentUnionFind:
@@ -172,15 +175,19 @@ class WeightedUnionFind:
             return None
 
     def all_group_members(self) -> tuple:
-        from collections import defaultdict
-        d = defaultdict(list)
-        w = defaultdict(list)
+        d = {}
+        w = {}
         for i in range(self.n):
             p = self.find(i)
-            d[p].append(i)
-            w[p].append(self.weight[i])
+            if p in d:
+                d[p].append(i)
+                w[p].append(self.weight[i])
+            else:
+                d[p] = [i]
+                w[p] = [self.weight[i]]
         return d, w
 
     def __str__(self) -> str:
         d, w = self.all_group_members()
-        return '\n'.join('{}: {} : {}'.format(k, v, x) for (k, v), (_, x) in zip(d.items(), w.items()))
+        return '\n'.join('{}: {} : {}'.format(k, v, x)
+                         for (k, v), (_, x) in zip(d.items(), w.items()))
