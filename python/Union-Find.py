@@ -8,9 +8,12 @@ class UnionFind:
         if self.parent[x] < 0:
             return x
         else:
+            p = x
+            while self.parent[p] >= 0:
+                p = self.parent[p]
             while self.parent[x] >= 0:
-                x = self.parent[x]
-            return x
+                self.parent[x], x = p, self.parent[x]
+            return p
 
     def union(self, x: int, y: int) -> bool:
         x = self.find(x)
