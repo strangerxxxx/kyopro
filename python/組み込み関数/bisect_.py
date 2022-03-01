@@ -57,11 +57,11 @@ def find_bothsides(a, x: int) -> tuple:
     i = bisect_left(a, x)
     if i:
         if i < len(a):
-            return a[i - 1] + 1, a[i] - 1
+            return a[i - 1], a[i]
         else:
-            return a[i - 1] + 1, None
+            return a[i - 1], None
     if a:
-        return None, a[0] - 1
+        return None, a[0]
     return None, None
 
 
