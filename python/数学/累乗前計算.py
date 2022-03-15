@@ -12,6 +12,6 @@ class pow_calc:
             for i in range(1, max_exp + 1):
                 self.p[i] = self.p[i - 1] * base % mod
 
-    def __call__(self, exp: int):
+    def __call__(self, exp: int) -> int:
         # assert 0 <= exp <= self.max_exp
         return self.p[exp]
