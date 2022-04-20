@@ -1,17 +1,17 @@
            01 WK.
-               03 I PIC 9(18).
-               03 N PIC 9(18).
+               03 I BINARY-DOUBLE SIGNED VALUE 0.
+               03 N BINARY-DOUBLE SIGNED VALUE 0.
+           01 PERM-WK.
+               03 PERM-I BINARY-DOUBLE SIGNED VALUE 0.
+               03 PERM-J BINARY-DOUBLE SIGNED VALUE 0.
+               03 PERM-P BINARY-DOUBLE SIGNED VALUE 0.
+               03 PERM-Q BINARY-DOUBLE SIGNED VALUE 0.
+               03 PERM-TMP BINARY-DOUBLE SIGNED VALUE 0.
+               03 NN BINARY-DOUBLE SIGNED VALUE 0.
+               03 COND BINARY-DOUBLE SIGNED VALUE 1.
            01 AL.
                03 AI OCCURS 1 TO 20 TIMES DEPENDING ON N.
-                   05 A PIC 9(10).
-           01 PERM-WK.
-               03 PERM-I PIC 9(18).
-               03 PERM-J PIC 9(18).
-               03 PERM-P PIC 9(18).
-               03 PERM-Q PIC 9(18).
-               03 PERM-TMP PIC 9(18).
-               03 NN PIC 9(18).
-               03 COND PIC 9(1) VALUE 1.
+                   05 A BINARY-DOUBLE SIGNED VALUE 0.
 
            PERFORM UNTIL COND = 0
                DISPLAY AL
