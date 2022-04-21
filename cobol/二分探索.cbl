@@ -11,19 +11,19 @@
        WORKING-STORAGE SECTION.
            01 WK.
                03 INP-WK PIC X(2000000).
-               03 I PIC 9(6).
-               03 S PIC 9(10).
-               03 T PIC 9(10).
-               03 PT PIC 9(10) VALUE 1.
-               03 OK PIC 9(10) VALUE 1000000000.
-               03 NG PIC 9(10) VALUE 0.
-               03 MID PIC 9(9).
-               03 N PIC 9(6).
-               03 K PIC 9(10).
+               03 I BINARY-DOUBLE SIGNED VALUE 0.
+               03 S BINARY-DOUBLE SIGNED VALUE 0.
+               03 T BINARY-DOUBLE SIGNED VALUE 0.
+               03 PT BINARY-DOUBLE SIGNED VALUE 1.
+               03 OK BINARY-DOUBLE SIGNED VALUE 1000000000.
+               03 NG BINARY-DOUBLE SIGNED VALUE 0.
+               03 MID BINARY-DOUBLE SIGNED VALUE 0.
+               03 N BINARY-DOUBLE SIGNED VALUE 0.
+               03 K BINARY-DOUBLE SIGNED VALUE 0.
                03 ANS-Z PIC Z(9)9.
            01 AL.
                03 AI OCCURS 1 TO 200000 TIMES DEPENDING ON N.
-                   05 A PIC 9(10).
+                   05 A BINARY-LONG SIGNED VALUE 0.
        PROCEDURE DIVISION.
            OPEN INPUT SYSIN.
            ACCEPT INP-WK.
