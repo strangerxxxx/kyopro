@@ -28,24 +28,24 @@ class UnionFind:
         return True
 
     def union_right(self, x: int, y: int) -> bool:
-        if y > x:
-            x, y = y, x
         x = self.find(x)
         y = self.find(y)
         if x == y:
             return False
+        if y > x:
+            x, y = y, x
         self.parent[x] += self.parent[y]
         self.parent[y] = x
         self.groups -= 1
         return True
 
     def union_left(self, x: int, y: int) -> bool:
-        if x > y:
-            x, y = y, x
         x = self.find(x)
         y = self.find(y)
         if x == y:
             return False
+        if x > y:
+            x, y = y, x
         self.parent[x] += self.parent[y]
         self.parent[y] = x
         self.groups -= 1
@@ -71,13 +71,11 @@ class UnionFind:
         return {i: -x for i, x in enumerate(self.parent) if x < 0}
 
     def all_group_members(self) -> dict:
-        d = {}
+        from collections import defaultdict
+        d = defaultdict(list)
         for i in range(self.n):
             p = self.find(i)
-            if p in d:
-                d[p].append(i)
-            else:
-                d[p] = [i]
+            d[p].append(i)
         return d
 
     def __str__(self) -> str:
