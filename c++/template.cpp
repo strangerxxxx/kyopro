@@ -1,10 +1,13 @@
 #ifdef STRANGERXXX
 #define _GLIBCXX_DEBUG
 #endif
+/*Pythonで提出してない？*/
 #include <bits/stdc++.h>
 using namespace std;
 #include <atcoder/all>
 using namespace atcoder;
+using mint = modint998244353;
+// using mint = modint1000000007;
 typedef long long ll;
 typedef unsigned int uint;
 typedef unsigned long long ull;
@@ -14,7 +17,7 @@ clock_t STARTTIME = clock();
 #define REP3(i, m, n) for (ll i = (m); i < (ll)(n); i++)
 #define REP4(i, m, n, d) for (ll i = (m); i < (ll)(n); i = i + (ll)(d))
 #define REPR(i, n) for (ll i = (ll)(n)-1; i >= 0; i--)
-#define REP3R(i, m, n) for (ll i = (ll)(n)-1; i >= (ll)(m); --i)
+#define REP3R(i, m, n) for (ll i = (ll)(n)-1; i >= (ll)(m); i--)
 #define REP4R(i, m, n, d) for (ll i = (m); i >= (ll)(n); i = i + (ll)(d))
 #define REPA(i, I) for (const auto &i : I)
 #define REPIJ(i, j, n)             \
@@ -28,20 +31,34 @@ typedef vector<VVI> VVVI;
 typedef vector<string> VS;
 typedef vector<VS> VVS;
 typedef vector<PII> VP;
+typedef set<ll> SI;
+typedef multiset<ll> MSI;
+typedef map<ll, ll> MI;
+typedef unordered_set<ll> USI;
+typedef unordered_map<ll, ll> UMI;
+typedef priority_queue<ll> PQ;
+typedef priority_queue<ll, VI, greater<ll>> RPQ;
+typedef deque<ll> DQ;
 random_device seed_gen;
 mt19937_64 mt(seed_gen());
 #define RAND() (double)mt() / UINF64
 #define RANDINT(l, r) mt() / (UINF64 / ((ll)(r) + 1 - (ll)(l))) + (ll)(l)
 #define pb push_back
 #define mp make_pair
-#define SUM(V) accumulate((V).begin(), (V).end(), 0)
+#define SUM(V) accumulate((V).begin(), (V).end(), 0LL)
 #define ALL(a) (a).begin(), (a).end()
 #define SORT(V) sort((V).begin(), (V).end())
 #define RSORT(V) sort((V).rbegin(), (V).rend())
 #define REVERSE(V) reverse((V).begin(), (V).end())
 #define mod(a, b) ((ll)a % (ll)b + (ll)b) % (ll)b
 #define ctoll(c) (ll) c - 48
-#define MAXVI(V) *max_element(ALL(V))
+#define MAXVI(V) *max_element((V).begin(), (V).end())
+#define MINVI(V) *min_element((V).begin(), (V).end())
+#define UB(V, x) upper_bound((V).begin(), (V).end(), x)
+#define LB(V, x) lower_bound((V).begin(), (V).end(), x)
+#define bisect_left(V, x) lower_bound((V).begin(), (V).end(), x) - (V).begin()
+#define bisect_right(V, x) upper_bound((V).begin(), (V).end(), x + 1) - (V).begin()
+#define BS(V, x) binary_search((V).begin(), (V).end(), x)
 template <class T>
 bool chmax(T &a, const T &b)
 {
@@ -70,7 +87,7 @@ const ll IINF64 = LLONG_MIN;
 const ull UINF64 = ULLONG_MAX;
 const ll MOD = 1000000007;
 const double EPS = 1e-10;
-const double PI = acos(-1.0);
+const double PI = 3.141592653589793238;
 string join(const vector<string> &v, const char *delim = 0)
 {
   string s;
@@ -169,9 +186,9 @@ int main()
   unordered_map<ll, ll> c;
   ll m = 0;
   PII ans;
-  rep(i, n)
+  ll a;
+  REP(i, n)
   {
-    ll a;
     cin >> a;
     if (c.count(a))
     {
@@ -189,4 +206,12 @@ int main()
     }
   }
   print(ans);
+  if (true)
+  {
+    print("Yes");
+  }
+  else
+  {
+    print("No");
+  }
 }
