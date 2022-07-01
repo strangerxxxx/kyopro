@@ -1,7 +1,7 @@
 class LowestCommonAncestor_doubling():
     # 最小共通祖先ダブリング版(重みなし)
-    def __init__(self, n, childs, root=0) -> None:
-        # childs[v]: 頂点vの子頂点 (親頂点は含んでもよい)
+    def __init__(self, n, edges, root=0) -> None:
+        # edges[v]: 頂点vの子頂点 (親頂点は含んでもよい)
         self.n = n
         parent = [None] * self.n
         parent[root] = -1
@@ -10,7 +10,7 @@ class LowestCommonAncestor_doubling():
         q = [root]
         while q:
             v = q.pop()
-            for c in childs[v]:
+            for c in edges[v]:
                 if parent[c] is None:
                     parent[c] = v
                     self.depth[c] = self.depth[v] + 1
@@ -32,7 +32,8 @@ class LowestCommonAncestor_doubling():
             S = T
         return kparent
 
-    def query(self, u, v):
+    def query(self, u, v) -> int:
+        # LCAの計算
         dd = self.depth[v] - self.depth[u]
         if dd < 0:
             u, v = v, u
@@ -58,15 +59,15 @@ class LowestCommonAncestor_doubling():
         # assert self.kparent[0][u] == self.kparent[0][v]
         return self.kparent[0][u]
 
-    def dist(self, u, v):
+    def dist(self, u, v) -> int:
         # u, vの距離
         p = self.query(u, v)
         return self.depth[u] + self.depth[v] - 2 * self.depth[p]
 
 
 class LowestCommonAncestor_euler():
-    def __init__(self, n, childs, parent=0) -> None:
-        # childs[v]: 頂点vの子頂点 (親頂点は含まない)
+    def __init__(self, n, edges, parent=0) -> None:
+        # edges[v]: 頂点vの子頂点 (親頂点は含まない)
         self.n = n
         self.route = []
         self.first = [None] * self.n
@@ -85,7 +86,7 @@ class LowestCommonAncestor_euler():
                 self.order[v] = order
                 order += 1
                 self.route.append(v)
-                for w in childs[v]:
+                for w in edges[v]:
                     if self.depth[w] is None:
                         q.append((~v, d))
                         q.append((w, d + 1))
@@ -119,7 +120,7 @@ class LowestCommonAncestor_euler():
             a >>= 1
             b >>= 1
 
-    def query(self, u, v):
+    def query(self, u, v) -> int:
         # LCAの計算 (外から呼び出す関数)
         fu = self.first[u]
         fv = self.first[v]
@@ -127,12 +128,12 @@ class LowestCommonAncestor_euler():
             fu, fv = fv, fu
         return self.route[min(self._query(fu, fv+1))[1]]
 
-    def dist(self, u, v):
+    def dist(self, u, v) -> int:
         # u, vの距離
         p = self.query(u, v)
         return self.depth[u] + self.depth[v] - 2 * self.depth[p]
 
-    def treesize(self, *a):
+    def treesize(self, *a) -> int:
         # *aからなる木の大きさ
         s = 0
         b = sorted(a, key=lambda x: self.order[x])
@@ -142,8 +143,8 @@ class LowestCommonAncestor_euler():
 
 
 class LowestCommonAncestor_doubling_weight():
-    def __init__(self, n, childs, root=0) -> None:
-        # childs[v]: 頂点vの子頂点とその重み (親頂点は含んでもよい)
+    def __init__(self, n, edges, root=0) -> None:
+        # edges[v]: 頂点vの子頂点とその重み (親頂点は含んでもよい)
         self.n = n
         parent = [None] * self.n
         parent[root] = -1
@@ -154,7 +155,7 @@ class LowestCommonAncestor_doubling_weight():
         q = [root]
         while q:
             v = q.pop()
-            for c, d in childs[v]:
+            for c, d in edges[v]:
                 if parent[c] is None:
                     parent[c] = v
                     self.depth[c] = self.depth[v] + 1
@@ -210,8 +211,8 @@ class LowestCommonAncestor_doubling_weight():
 
 
 class LowestCommonAncestor_euler_weight():
-    def __init__(self, n, childs, parent=0) -> None:
-        # childs[v]: 頂点vの子頂点とその重み (親頂点は含んでもよい)
+    def __init__(self, n, edges, parent=0) -> None:
+        # edges[v]: 頂点vの子頂点とその重み (親頂点は含んでもよい)
         self.n = n
         self.route = []
         self.first = [None] * self.n
@@ -230,7 +231,7 @@ class LowestCommonAncestor_euler_weight():
                 self.order[v] = order
                 order += 1
                 self.route.append(v)
-                for w, dist in childs[v]:
+                for w, dist in edges[v]:
                     if self.depth[w] is None:
                         q.append((~v, d))
                         q.append((w, d + dist))
