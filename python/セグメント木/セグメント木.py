@@ -18,10 +18,10 @@ class SegmentTree:
         self.element = element
         self.enable_cutoff = enable_cutoff
         for i in range(self.n - 1, 0, -1):
-            self.tree[i] = self.function(
-                self.tree[i << 1], self.tree[(i << 1) + 1])
+            self.tree[i] = self.function(self.tree[i << 1],
+                                         self.tree[i << 1 | 1])
 
-    def update(self, i: int, x: int) -> None:
+    def set(self, i: int, x: int) -> None:
         # assert 0 <= i < self.n
         i += self.n
         self.tree[i] = x
@@ -39,7 +39,7 @@ class SegmentTree:
             while i:
                 i >>= 1
                 before = self.function(
-                    self.tree[i << 1], self.tree[(i << 1) + 1])
+                    self.tree[i << 1], self.tree[i << 1 | 1])
                 if self.tree[i] == before:
                     return
                 self.tree[i] = before
@@ -47,7 +47,7 @@ class SegmentTree:
             while i:
                 i >>= 1
                 self.tree[i] = self.function(
-                    self.tree[i << 1], self.tree[(i << 1) + 1])
+                    self.tree[i << 1], self.tree[i << 1 | 1])
 
     def query(self, l: int, r: int) -> int:
         # assert 0 <= l < self.n
@@ -76,3 +76,52 @@ class SegmentTree:
             r = self.n
         # assert 0 < r <= self.n
         return self.tree[l + self.n: r + self.n]
+
+    # def max_right(self, l: int = 0, function=lambda x: x < 0):
+    #     # function(tree[l, r)) == Trueとなる最大のrを返す
+    #     # assert 0 <= l <= self.n
+    #     if l == self.n:
+    #         return self.n
+    #     i = l + self.n
+    #     sm = self.element
+    #     while True:
+    #         while not (i & 1):
+    #             i >>= 1
+    #         if not function(self.function(sm, self.tree[i])):
+    #             while i < self.n:
+    #                 i <<= 1
+    #                 if function(self.function(sm, self.tree[i])):
+    #                     sm = self.function(sm, self.tree[i])
+    #                     i += 1
+    #             return i - self.n
+    #         sm = self.function(sm, self.tree[i])
+    #         if i <= 1:
+    #             break
+    #         i += 1
+    #     return self.n
+
+    # def min_left(self, r: int = None, function=lambda x: x > 0):
+    #     # function(tree[l, r)) == Trueとなる最小のlを返す
+    #     # assert 0 <= r <= self.n
+    #     if r == 0:
+    #         return 0
+    #     if r is None:
+    #         r = self.n
+    #     i = r + self.n
+    #     sm = self.element
+    #     while True:
+    #         i -= 1
+    #         while i > 1 and (i & 1):
+    #             i >>= 1
+    #         if not function(self.function(sm, self.tree[i])):
+    #             while i < self.n:
+    #                 i <<= 1
+    #                 i += 1
+    #                 if function(self.function(sm, self.tree[i])):
+    #                     sm = self.function(sm, self.tree[i])
+    #                     i -= 1
+    #             return i + 1 - self.n
+    #         sm = self.function(sm, self.tree[i])
+    #         if i <= 1:
+    #             break
+    #     return 0
