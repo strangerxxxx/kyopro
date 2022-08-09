@@ -9,6 +9,7 @@ using namespace atcoder;
 using mint = modint998244353;
 // using mint = modint1000000007;
 typedef long long ll;
+const ll MOD = 998244353;
 typedef unsigned int uint;
 typedef unsigned long long ull;
 clock_t STARTTIME = clock();
@@ -85,7 +86,6 @@ const uint UINF32 = UINT_MAX;
 const ll INF64 = LLONG_MAX;
 const ll IINF64 = LLONG_MIN;
 const ull UINF64 = ULLONG_MAX;
-const ll MOD = 1000000007;
 const double EPS = 1e-10;
 const double PI = 3.141592653589793238;
 string join(const vector<string> &v, const char *delim = 0)
