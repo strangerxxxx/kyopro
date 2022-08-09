@@ -1,7 +1,7 @@
 class BIT():
     def __init__(self, init_val):
         if hasattr(init_val, "__iter__"):
-            self.n = len(init_val)
+            self.n = len(init_val) + 1
             self.data = [0] * self.n
             self.build(init_val)
         else:
@@ -9,7 +9,6 @@ class BIT():
             self.data = [0] * self.n
 
     def build(self, arr):
-        # 配列arrからBITを構築する
         # assert len(arr) <= n
         for i, a in enumerate(arr):
             self.data[i] = a
@@ -17,24 +16,36 @@ class BIT():
             if i + (i & -i) <= self.n:
                 self.data[i + (i & -i) - 1] += self.data[i - 1]
 
-    def add(self, p, x):
-        # assert 0 <= p < self.n
-        p += 1
-        while p <= self.n:
-            self.data[p - 1] += x
-            p += p & -p
+    def add(self, i, x):
+        # assert 0 <= i < self.n
+        i += 1
+        while i <= self.n:
+            # 最大など求めるときはここを変える(1)
+            self.data[i - 1] += x
+            i += i & -i
+
+    def update(self, i, x):
+        # assert 0 <= i < self.n
+        self.add(i, x - self.get(i))
 
     def sum(self, r):
+        # sum 0<=i<r
         # assert 0 <= r <= self.n
         s = 0
         while r:
+            # 最大など求めるときはここを変える(2)
             s += self.data[r - 1]
             r -= r & -r
         return s
 
     def query(self, l, r):
+        # sum l<=i<r
         # assert 0 <= l <= r <= self.n
         return self.sum(r) - self.sum(l)
+
+    def get(self, i):
+        # assert 0 <= i < self.n
+        return self.query(i, i + 1)
 
 
 class BIT2:
@@ -42,7 +53,7 @@ class BIT2:
     def __init__(self, h, w):
         self.h = h
         self.w = w
-        self.data = [{} for i in range(h+1)]
+        self.data = [{} for _ in range(h + 1)]
 
     # O(logH*logW)
     def sum(self, i, j):
