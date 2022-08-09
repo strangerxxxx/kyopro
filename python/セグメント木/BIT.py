@@ -20,7 +20,6 @@ class BIT():
         # assert 0 <= i < self.n
         i += 1
         while i <= self.n:
-            # 最大など求めるときはここを変える(1)
             self.data[i - 1] += x
             i += i & -i
 
@@ -33,7 +32,6 @@ class BIT():
         # assert 0 <= r <= self.n
         s = 0
         while r:
-            # 最大など求めるときはここを変える(2)
             s += self.data[r - 1]
             r -= r & -r
         return s
