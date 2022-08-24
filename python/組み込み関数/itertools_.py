@@ -56,6 +56,26 @@ def bits(n: int):
 
 
 def powerset(a):
+    # 冪集合
     n = len(a)
     for j in range(1 << n):
         yield [x for i, x in enumerate(a) if j >> i & 1]
+
+
+def pairwise(n: int):
+    # assert a % 2 == 0
+    q = [([], (1 << n) - 1)]
+    while q:
+        a, b = q.pop()
+        if b:
+            first = (b & (-b)).bit_length() - 1
+            b -= 1 << first
+            second = 1
+            c = b >> 1
+            while c:
+                if c & 1:
+                    q.append((a + [[first, second]], b - (1 << second)))
+                c >>= 1
+                second += 1
+        else:
+            yield a
