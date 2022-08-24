@@ -21,6 +21,7 @@ def float_binary_search():
     delta = 10 ** -13
     ok, ng = 0, 10 ** 10
     while abs(ok - ng) > delta:
+        # mid = (ok * ng) ** 0.5  # 相対誤差
         mid = (ok + ng) / 2
         if f(mid):
             ok = mid
