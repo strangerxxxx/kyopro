@@ -6,50 +6,50 @@ def scipycomb(n, r):
     # print(math.perm(n, r))
 
 
-def cmb(a: int, b: int, m=998244353):
+def cmb(n: int, r: int, m=998244353):
     # modあり組み合わせ
-    if (b > a - b):
-        return cmb(a, a - b, m)
+    if (r > n - r):
+        return cmb(n, n - r, m)
     c = d = 1
-    for i in range(b):
-        c *= (a - i)
-        d *= (b - i)
+    for i in range(r):
+        c *= (n - i)
+        d *= (r - i)
         c %= m
         d %= m
     return c * pow(d, m - 2, m) % m
 
 
-def perm(a: int, b: int = None, m: int = 998244353) -> int:
-    # modあり順列 b=aで階乗
-    if b is None:
-        b = a
+def perm(n: int, r: int = None, m: int = 998244353) -> int:
+    # modあり順列 n==rで階乗
+    if r is None:
+        r = n
     c = 1
-    for i in range(b):
-        c *= (a - i)
+    for i in range(r):
+        c *= (n - i)
         c %= m
     return c
 
 
-def hom(a: int, b: int, m=998244353):
+def hom(n: int, r: int, m=998244353):
     # modあり重複組み合わせ nHr=n+r-1Cr, n:separator+1
-    def cmb(a: int, b: int, m=998244353):
-        if (b > a - b):
-            return cmb(a, a - b, m)
+    def cmb(n: int, r: int, m=998244353):
+        if (r > n - r):
+            return cmb(n, n - r, m)
         c = d = 1
-        for i in range(b):
-            c *= (a - i)
-            d *= (b - i)
+        for i in range(r):
+            c *= (n - i)
+            d *= (r - i)
             c %= m
             d %= m
         return c * pow(d, m - 2, m) % m
-    return cmb(a + b - 1, b, m)
+    return cmb(n + r - 1, r, m)
 
 
-def factorial(a: int, m: int = 998244353) -> int:
+def factorial(n: int, m: int = 998244353) -> int:
     # modあり階乗
     c = 1
-    for i in range(a):
-        c *= (a - i)
+    for i in range(n):
+        c *= (n - i)
         c %= m
     return c
 
