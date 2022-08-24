@@ -1,7 +1,16 @@
-def floor_log(n: int, a: int = 2) -> int:
+def ceil_log(n: int, a: int = 2) -> int:
     i = 1
     res = 0
     while i < n:
+        i *= a
+        res += 1
+    return res
+
+
+def floor_log(n: int, a: int = 2) -> int:
+    i = 1
+    res = -1
+    while i <= n:
         i *= a
         res += 1
     return res
