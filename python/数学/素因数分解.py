@@ -3,7 +3,7 @@ from random import randint
 
 # from functools import lru_cache
 # @lru_cache(maxsize=None)
-def prime_factorization(n: int):
+def prime_factorization(n: int) -> dict:
     # dictを返す
     from collections import defaultdict
     pf = defaultdict(int)
@@ -16,7 +16,7 @@ def prime_factorization(n: int):
     return pf
 
 
-def prime_decomposition(n: int):
+def prime_decomposition(n: int) -> list:
     # nを素因数分解したリストを返す
     i = 2
     res = []
@@ -60,14 +60,15 @@ class PrimeFactorization:
                     self.spf[j] = i
 
     def __call__(self, i: int) -> dict:
-        assert 0 <= i <= self.n
-        res = {}
+        # assert 0 <= i <= self.n
+        from collections import defaultdict
+        res = defaultdict(int)
         while self.spf[i]:
             min_pk = self.spf[i]
-            res[min_pk] = res.get(min_pk, 0) + 1
+            res[min_pk] += 1
             i //= min_pk
         if i > 1:
-            res[i] = res.get(i, 0) + 1
+            res[i] += 1
         return res
 
 
