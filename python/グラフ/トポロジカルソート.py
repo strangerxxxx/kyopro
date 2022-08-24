@@ -25,6 +25,35 @@ def topo():
     print(*ans if ans else -1)
 
 
+def topo2():
+    def topological_sort(n: int, outs):
+        from collections import deque
+        in_cnt = [0] * n
+        for a in edge:
+            for b in a:
+                in_cnt[b] += 1
+        res = []
+        queue = deque([i for i, x in enumerate(in_cnt) if x == 0])
+        while queue:
+            v = queue.popleft()
+            res.append(v)
+            for v2 in outs[v]:
+                in_cnt[v2] -= 1
+                if in_cnt[v2] == 0:
+                    queue.append(v2)
+        if len(res) == n:
+            return res
+        else:
+            return None
+    n, m = map(int, input().split())
+    edge = [tuple(map(int, input().split())) for _ in range(m)]
+    outs = [[] for _ in range(n)]
+    for a, b in edge:
+        outs[a].append(b)
+    ans = topological_sort(n, outs)
+    print(*ans if ans else -1)
+
+
 def topo_dfs():
     def topological_sort_dfs(n, edge):
         reached = [False] * n
