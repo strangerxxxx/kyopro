@@ -1,101 +1,91 @@
-def articulation_detection(graph, start=0):
-    # 関節点
-    import sys
-    RECURSION_LIMIT = 10 ** 6
-    sys.setrecursionlimit(RECURSION_LIMIT)
-    n = len(graph)
-    order = [-1] * n
-    cnt = -1
-    articulation_points = []
-
-    def dfs(u, prev):
-        nonlocal cnt
+def bridge_detection(edges, start=0):
+    # verified: https://onlinejudge.u-aizu.ac.jp/status/users/stranger/submissions/1/GRL_3_A/judge/6931857/Python3
+    # verified: https://onlinejudge.u-aizu.ac.jp/status/users/stranger/submissions/1/GRL_3_B/judge/6931108/Python3
+    # verified: https://judge.yosupo.jp/submission/102227
+    n = len(edges)
+    ord = [-1] * n
+    order = ord[:]
+    low = ord[:]
+    q = [(start, -1)]
+    cnt = 0
+    edge = [[] for _ in range(n)]
+    cycle_graph = [[] for _ in range(n)]
+    # dfs_graph = [[] for _ in range(n)]
+    while q:
+        i, pos = q.pop()
+        if ord[i] >= 0:
+            edge[i].append(pos)
+            continue
+        if pos >= 0:
+            edge[pos].append(i)
+            # dfs_graph[pos].append(i)
+        ord[i] = cnt
+        order[cnt] = i
         cnt += 1
-        low_pt = order[u] = cnt
-        f_cnt = art_flag = 0
-        for v in graph[u]:
-            if v == prev:
+        for j in edges[i]:
+            if j == pos or ord[j] >= 0:
                 continue
-            if order[v] == -1:
-                v_low_pt = dfs(v, u)
-                art_flag |= v_low_pt >= order[u]
-                low_pt = min(v_low_pt, low_pt)
-                f_cnt += 1
-            else:
-                low_pt = min(low_pt, order[v])
-        if len(graph[u]) > 1 and ((prev != -1 and art_flag) or (prev == -1 and f_cnt > 1)):
-            articulation_points.append(u)
-        return low_pt
-    dfs(start, -1)
-    return articulation_points
-
-
-def bridge_detection(graph, start=0):
-    # 橋、二重辺連結成分
-    import sys
-    RECURSION_LIMIT = 10 ** 6
-    sys.setrecursionlimit(RECURSION_LIMIT)
-    n = len(graph)
-    order = [-1] * n
+            q.append((j, i))
+    for i, j in enumerate(reversed(order)):
+        low[j] = n - i - 1
+        for k in edge[j]:
+            if ord[k] < low[j]:
+                low[j] = ord[k]
+            if low[k] >= 0 and low[k] < low[j]:
+                low[j] = low[k]
     bridges = []
-    cycle_graph = [set() for _ in range(n)]
-    cnt = -1
-
-    def dfs(u, prev):
-        nonlocal cnt
-        cnt += 1
-        low_pt = order[u] = cnt
-        for v in graph[u]:
-            if v == prev:
-                continue
-            if order[v] == -1:
-                v_low_pt = dfs(v, u)
-                if v_low_pt > order[u]:
-                    bridges.append(tuple(sorted([u, v])))
-                else:
-                    cycle_graph[u].add(v)
-                    cycle_graph[v].add(u)
-                low_pt = min(low_pt, v_low_pt)
+    for i, j in enumerate(edge):
+        for k in j:
+            if ord[i] < low[k]:
+                bridges.append(sorted((i, k)))
             else:
-                low_pt = min(low_pt, order[v])
-                cycle_graph[u].add(v)
-                cycle_graph[v].add(u)
-        return low_pt
-    dfs(start, -1)
-    return sorted(bridges), cycle_graph
+                cycle_graph[i].append(k)
+                cycle_graph[k].append(i)
+    return bridges, cycle_graph
+    # articulation_points = []
+    # for i in range(n):
+    #     if i == start:
+    #         if len(dfs_graph[i]) >= 2:
+    #             articulation_points.append(i)
+    #         continue
+    #     for j in dfs_graph[i]:
+    #         if ord[i] <= low[j]:
+    #             articulation_points.append(i)
+    #             break
+    # return articulation_points
 
 
 def contract(bridges, cycle_graph):
-    import sys
-    RECURSION_LIMIT = 10 ** 6
-    sys.setrecursionlimit(RECURSION_LIMIT)
     n = len(cycle_graph)
-    cnt = -1
-    visited = [0] * n
+    cnt = 0
+    visited = [False] * n
     group = [-1] * n
-
-    def dfs(u, cnt):
-        visited[u] = 1
-        for v in cycle_graph[u]:
-            if visited[v] == 0:
-                group[v] = cnt
-                dfs(v, cnt)
-
     for u in range(n):
-        if visited[u] == 0:
-            cnt += 1
+        if not visited[u]:
             group[u] = cnt
-            dfs(u, cnt)
-
-    contracted_graph = [[] for _ in range(cnt + 1)]
+            visited[u] = True
+            q = [u]
+            while q:
+                v = q.pop()
+                for w in cycle_graph[v]:
+                    if not visited[w]:
+                        visited[w] = True
+                        group[w] = cnt
+                        q.append(w)
+            cnt += 1
+    contracted_graph = [[] for _ in range(cnt)]
     for u, v in bridges:
-        contracted_graph[group[u]] += [group[v]]
-        contracted_graph[group[v]] += [group[u]]
+        contracted_graph[group[u]].append(group[v])
+        contracted_graph[group[v]].append(group[u])
     return contracted_graph
 
 
 if __name__ == "__main__":
     graph = [[6], [5, 3], [3, 4, 6], [6, 1, 2], [2], [1], [3, 0, 2]]
+    for i, j in enumerate(graph):
+        for k in j:
+            if i < k:
+                print(i, k)
     print(articulation_detection(graph))
     print(bridge_detection(graph))
     print(contract(*bridge_detection(graph)))
