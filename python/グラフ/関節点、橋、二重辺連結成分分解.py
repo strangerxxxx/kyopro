@@ -80,13 +80,75 @@ def contract(bridges, cycle_graph):
     return contracted_graph
 
 
+def all_bridge_detection(edges):
+    class UnionFind:
+        def __init__(self, n: int) -> None:
+            self.n = n
+            self.parent = [-1] * n
+            self.groups = n
+
+        def find(self, x: int) -> int:
+            if self.parent[x] < 0:
+                return x
+            else:
+                p = x
+                while self.parent[p] >= 0:
+                    p = self.parent[p]
+                while self.parent[x] >= 0:
+                    self.parent[x], x = p, self.parent[x]
+                return p
+
+        def union(self, x: int, y: int) -> bool:
+            x = self.find(x)
+            y = self.find(y)
+            if x == y:
+                return False
+            if self.parent[x] > self.parent[y]:
+                x, y = y, x
+            self.parent[x] += self.parent[y]
+            self.parent[y] = x
+            self.groups -= 1
+            return True
+
+        def all_group_members(self) -> dict:
+            from collections import defaultdict
+            d = defaultdict(list)
+            for i in range(self.n):
+                p = self.find(i)
+                d[p].append(i)
+            return d
+    n = len(edges)
+    uf = UnionFind(n)
+    for i, j in enumerate(edges):
+        for k in j:
+            uf.union(i, k)
+    u = UnionFind(n)
+    bridges = []
+    cycle_graphs = [[] for _ in range(len(edges))]
+    for v in uf.all_group_members().values():
+        d = {j: i for i, j in enumerate(v)}
+        edge = [[] for _ in range(len(v))]
+        for i, j in enumerate(v):
+            for k in edges[j]:
+                edge[i].append(d[k])
+        b, c = bridge_detection(edge)
+        for i, j in b:
+            bridges.append((v[i], v[j]))
+        for i, j in enumerate(c):
+            for k in j:
+                cycle_graphs[v[i]].append(v[k])
+    return bridges, cycle_graphs
+
+
 if __name__ == "__main__":
     graph = [[6], [5, 3], [3, 4, 6], [6, 1, 2], [2], [1], [3, 0, 2]]
-    for i, j in enumerate(graph):
-        for k in j:
-            if i < k:
-                print(i, k)
-    print(articulation_detection(graph))
+    # for i, j in enumerate(graph):
+    #     for k in j:
+    #         if i < k:
+    #             print(i, k)
     print(bridge_detection(graph))
     print(contract(*bridge_detection(graph)))
     # bridges, cycle_graph = bridge_detection(G, start=0)
+    graph = [[6], [5, 3], [3, 4, 6], [6, 1, 2], [
+        2], [1], [3, 0, 2], [8, 9], [7, 9], [7, 8], [11], [10]]
+    print(all_bridge_detection(graph))
