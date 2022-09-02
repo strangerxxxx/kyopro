@@ -1,4 +1,5 @@
 class RollingHash:
+    # verified: https://onlinejudge.u-aizu.ac.jp/status/users/stranger/submissions/1/ALDS1_14_B/judge/6938514/Python3
     def __init__(self, r: int = None) -> None:
         self.m = (1 << 61) - 1
         if r is None:
