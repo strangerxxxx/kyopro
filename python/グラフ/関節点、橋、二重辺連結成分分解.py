@@ -122,7 +122,6 @@ def all_bridge_detection(edges):
     for i, j in enumerate(edges):
         for k in j:
             uf.union(i, k)
-    u = UnionFind(n)
     bridges = []
     cycle_graphs = [[] for _ in range(len(edges))]
     for v in uf.all_group_members().values():
