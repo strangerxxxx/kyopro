@@ -77,12 +77,18 @@ class RollingHash:
             x = self._mul(x, self.r)
         return res
 
-    def get_hash(self, s_or_head_list=None, l: int = 0, r: int = None) -> int:
+    def get_hash(self, s_or_head_list, l: int = 0, r: int = None) -> int:
         if type(s_or_head_list) is str:
             if r is None:
-                return self.hash_list(s_or_head_list, len(s_or_head_list))[0]
+                return next(self.gen_hash_list(s_or_head_list[l:],
+                                               len(s_or_head_list) - l))
             else:
-                return self.gen_hash_list(s_or_head_list, r - l + 1)[l + 1]
+                if l == r:
+                    return 0
+                g = self.gen_hash_list(s_or_head_list[l:], r - l)
+                for _ in range(r - l - 1):
+                    next(g)
+                return next(g)
         # verified: https://bit.ly/3ScyApH
         if r is None:
             r = len(s_or_head_list) + 1
@@ -156,12 +162,18 @@ class RollingHash_m:
             x = x * self.r % self.m
         return res
 
-    def get_hash(self, s_or_head_list=None, l: int = 0, r: int = None) -> int:
+    def get_hash(self, s_or_head_list, l: int = 0, r: int = None) -> int:
         if type(s_or_head_list) is str:
             if r is None:
-                return self.hash_list(s_or_head_list, len(s_or_head_list))[0]
+                return next(self.gen_hash_list(s_or_head_list[l:],
+                                               len(s_or_head_list) - l))
             else:
-                return self.gen_hash_list(s_or_head_list, r - l + 1)[l + 1]
+                if l == r:
+                    return 0
+                g = self.gen_hash_list(s_or_head_list[l:], r - l)
+                for _ in range(r - l - 1):
+                    next(g)
+                return next(g)
         if r is None:
             r = len(s_or_head_list) + 1
         return (s_or_head_list[r] - s_or_head_list[l]
@@ -169,7 +181,7 @@ class RollingHash_m:
 
 
 class RollingHash2d:
-    # verified: https://onlinejudge.u-aizu.ac.jp/status/users/stranger/submissions/1/ALDS1_14_C/judge/6938890/Python3
+    # verified: https://bit.ly/3xRdbdi
     def __init__(self, r: int = None, r2: int = None) -> None:
         self.m = (1 << 61) - 1
         import random
@@ -181,8 +193,10 @@ class RollingHash2d:
         self.r2 = r2
         self.msk30 = (1 << 30) - 1
         self.msk31 = (1 << 31) - 1
+        self.pr = {}
+        self.pr2 = {}
 
-    def mul(self, a: int, b: int) -> int:
+    def _mul(self, a: int, b: int) -> int:
         au = a >> 31
         ad = a & self.msk31
         bu = b >> 31
@@ -192,19 +206,29 @@ class RollingHash2d:
         midd = mid & self.msk30
         return (au * bu * 2 + midu + (midd << 31) + ad * bd) % self.m
 
+    def _powr(self, n: int):
+        if n not in self.pr:
+            self.pr[n] = pow(self.r, n, self.m)
+        return self.pr[n]
+
+    def _powr2(self, n: int):
+        if n not in self.pr2:
+            self.pr2[n] = pow(self.r2, n, self.m)
+        return self.pr2[n]
+
     def _hash_list(self, s: str, length: int) -> list:
         n = len(s)
         res = [None] * (n - length + 1)
         x = 0
         for i in s[:length]:
-            x = self.mul(x, self.r)
+            x = self._mul(x, self.r)
             x += ord(i)
         x %= self.m
         res[0] = x
-        denom = pow(self.r, length - 1, self.m)
+        denom = self._powr(length - 1)
         for i, (j, k) in enumerate(zip(s[length:], s[:-length])):
-            x -= self.mul(ord(k), denom)
-            x = self.mul(x, self.r)
+            x -= self._mul(ord(k), denom)
+            x = self._mul(x, self.r)
             x += ord(j)
             x %= self.m
             res[i + 1] = x
@@ -213,14 +237,14 @@ class RollingHash2d:
     def _gen_hash_list(self, s: str, length: int) -> int:
         x = 0
         for i in s[:length]:
-            x = self.mul(x, self.r)
+            x = self._mul(x, self.r)
             x += ord(i)
         x %= self.m
         yield x
-        denom = pow(self.r, length - 1, self.m)
+        denom = self._powr(length - 1)
         for i, (j, k) in enumerate(zip(s[length:], s[:-length])):
-            x -= self.mul(ord(k), denom)
-            x = self.mul(x, self.r)
+            x -= self._mul(ord(k), denom)
+            x = self._mul(x, self.r)
             x += ord(j)
             x %= self.m
             yield x
@@ -234,17 +258,17 @@ class RollingHash2d:
         for i in range(h):
             hash_lists[i] = self._hash_list(s[i], w)
             for j, k in enumerate(hash_lists[i]):
-                x[j] = self.mul(x[j], self.r2)
+                x[j] = self._mul(x[j], self.r2)
                 x[j] += k
         for j in range(n2 - w + 1):
             x[j] %= self.m
             res[0][j] = x[j]
-        denom = pow(self.r2, h - 1, self.m)
+        denom = self._powr2(h - 1)
         for i in range(n - h):
             hash_lists[i + h] = self._hash_list(s[i + h], w)
             for j in range(n2 - w + 1):
-                x[j] -= self.mul(hash_lists[i][j], denom)
-                x[j] = self.mul(x[j], self.r2)
+                x[j] -= self._mul(hash_lists[i][j], denom)
+                x[j] = self._mul(x[j], self.r2)
                 x[j] += hash_lists[i + h][j]
                 x[j] %= self.m
                 res[i + 1][j] = x[j]
@@ -253,7 +277,7 @@ class RollingHash2d:
     def _get_hash(self, s: str) -> int:
         res = 0
         for i in s:
-            res = self.mul(res, self.r)
+            res = self._mul(res, self.r)
             res += ord(i)
         res %= self.m
         return res
