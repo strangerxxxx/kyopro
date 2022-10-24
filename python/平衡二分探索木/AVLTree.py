@@ -373,11 +373,11 @@ class AVLTree:
         v = self.root
         s = 0
         while v is not None:
-            t = s+v.lch.size if v.lch is not None else s
+            t = s + v.lch.size if v.lch is not None else s
             if t == k:
                 return v.key
             elif t < k:
-                s = t+1
+                s = t + 1
                 v = v.rch
             else:
                 v = v.lch
@@ -466,25 +466,63 @@ class AVLTree:
         Return:
             dict: 存在するキーとノード値をdictで出力
         '''
-        retdict = dict()
-        for i in range(len(self)):
-            key = self.find_kth_element(i)
-            val = self[key]
-            retdict[key] = val
+        if self.root is None:
+            return {}
+        retdict = {}
+        q = [self.root]
+        while q:
+            i = q.pop()
+            retdict[i.key] = i.val
+            if i.rch is not None:
+                q.append(i.rch)
+            if i.lch is not None:
+                q.append(i.lch)
         return retdict
 
-    def values(self):
-        for i in range(len(self)):
-            yield self[self.find_kth_element(i)]
-
     def keys(self):
-        for i in range(len(self)):
-            yield self.find_kth_element(i)
+        if self.root is None:
+            return
+        q = [(False, self.root)]
+        while q:
+            iskey, i = q.pop()
+            if iskey:
+                yield i
+            else:
+                if i.rch is not None:
+                    q.append((False, i.rch))
+                q.append((True, i.key))
+                if i.lch is not None:
+                    q.append((False, i.lch))
+
+    def values(self):
+        if self.root is None:
+            return
+        q = [(False, self.root)]
+        while q:
+            isval, i = q.pop()
+            if isval:
+                yield i
+            else:
+                if i.rch is not None:
+                    q.append((False, i.rch))
+                q.append((True, i.val))
+                if i.lch is not None:
+                    q.append((False, i.lch))
 
     def items(self):
-        for i in range(len(self)):
-            key = self.find_kth_element(i)
-            yield key, self[key]
+        if self.root is None:
+            return
+        q = [(False, self.root)]
+        while q:
+            isnode, i = q.pop()
+            if isnode:
+                yield i.key, i.val
+            else:
+                if i.rch is not None:
+                    q.append((False, i.rch))
+                q.append((True, i))
+                if i.lch is not None:
+                    q.append((False, i.lch))
 
     def __iter__(self):
         return self.keys()
