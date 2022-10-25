@@ -57,3 +57,10 @@ class MinMaxHeap():
         self.size += 1
         heappush(self.max_heap, -v)
         heappush(self.min_heap, v)
+
+    def clear(self):
+        self.max_heap = []
+        self.min_heap = []
+        self.max_deleted = []
+        self.min_deleted = []
+        self.size = 0
