@@ -479,50 +479,34 @@ class AVLTree:
                 q.append(i.lch)
         return retdict
 
-    def keys(self):
+    def _sorted_nodes(self):
         if self.root is None:
             return
-        q = [(False, self.root)]
+        q = [(self.root, False)]
         while q:
-            iskey, i = q.pop()
-            if iskey:
-                yield i
+            node, iscenter = q.pop()
+            if iscenter:
+                yield node
             else:
-                if i.rch is not None:
-                    q.append((False, i.rch))
-                q.append((True, i.key))
-                if i.lch is not None:
-                    q.append((False, i.lch))
+                if node.rch is not None:
+                    q.append((node.rch, False))
+                if node.lch is None:
+                    yield node
+                else:
+                    q.append((node, True))
+                    q.append((node.lch, False))
+
+    def keys(self):
+        for i in self._sorted_nodes():
+            yield i.key
 
     def values(self):
-        if self.root is None:
-            return
-        q = [(False, self.root)]
-        while q:
-            isval, i = q.pop()
-            if isval:
-                yield i
-            else:
-                if i.rch is not None:
-                    q.append((False, i.rch))
-                q.append((True, i.val))
-                if i.lch is not None:
-                    q.append((False, i.lch))
+        for i in self._sorted_nodes():
+            yield i.val
 
     def items(self):
-        if self.root is None:
-            return
-        q = [(False, self.root)]
-        while q:
-            isnode, i = q.pop()
-            if isnode:
-                yield i.key, i.val
-            else:
-                if i.rch is not None:
-                    q.append((False, i.rch))
-                q.append((True, i))
-                if i.lch is not None:
-                    q.append((False, i.lch))
+        for i in self._sorted_nodes():
+            yield i.key, i.val
 
     def __iter__(self):
         return self.keys()
