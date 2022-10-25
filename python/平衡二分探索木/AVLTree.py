@@ -30,12 +30,13 @@ class AVLTree:
     Attributes:
         root (Node): 根ノード。初期値はNone。
         default (any): ノード値のデフォルト値。デフォルトではNone。（数値、リストなど可）
-
+        deepcopy (bool): defaultのコピーを深く取るかどうか。デフォルトではFalse（shallow copy）
     """
 
-    def __init__(self, default=None):
+    def __init__(self, default=None, deepcopy=False):
         self.root = None
         self.default = default
+        self.deepcopy = deepcopy
 
     def rotate_left(self, v):
         u = v.rch
@@ -115,7 +116,10 @@ class AVLTree:
 
         """
         if val is None:
-            val = copy.deepcopy(self.default)
+            if self.deepcopy:
+                val = copy.deepcopy(self.default)
+            else:
+                val = copy.copy(self.default)
         if self.root is None:
             self.root = Node(key, val)
             return
@@ -466,18 +470,7 @@ class AVLTree:
         Return:
             dict: 存在するキーとノード値をdictで出力
         '''
-        if self.root is None:
-            return {}
-        retdict = {}
-        q = [self.root]
-        while q:
-            i = q.pop()
-            retdict[i.key] = i.val
-            if i.rch is not None:
-                q.append(i.rch)
-            if i.lch is not None:
-                q.append(i.lch)
-        return retdict
+        return dict(self.items())
 
     def _sorted_nodes(self):
         if self.root is None:
