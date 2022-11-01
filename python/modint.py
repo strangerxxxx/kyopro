@@ -42,23 +42,19 @@ class Modint(int):
         return Modint(self.modpow(other, self))
 
     def __iadd__(self, other):
-        int.__iadd__(self, other)
-        self %= Modint.mod
+        self = self.__add__(other)
         return self
 
     def __isub__(self, other):
-        int.__isub__(self, other)
-        self %= Modint.mod
+        self = self.__sub__(other)
         return self
 
     def __imul__(self, other):
-        int.__imul__(self, other)
-        self %= Modint.mod
+        self = self.__mul__(other)
         return self
 
     def __ifloordiv__(self, other):
-        int.__imul__(self, self.modinv(other))
-        self %= Modint.mod
+        self = self.__mul__(self.modinv(other))
         return self
 
     __itruediv__ = __ifloordiv__
