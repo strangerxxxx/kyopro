@@ -11,7 +11,6 @@ class Node:
         rch (Node): 右の子ノード。
         bias (int): 平衡度。(左部分木の高さ)-(右部分木の高さ)。
         size (int): 自分を根とする部分木の大きさ
-
     """
 
     def __init__(self, key, val):
@@ -109,11 +108,10 @@ class AVLTree:
 
         Args:
             key (any): キー。
-            val (any): 値。（指定しない場合はvaldefaultが入る）
+            val (any): 値。（指定しない場合はself.defaultが入る）
 
         Note:
             同じキーがあった場合は上書きする。
-
         """
         if val is None:
             if self.deepcopy:
@@ -183,20 +181,10 @@ class AVLTree:
             p, pdir = history.pop()
             p.size += 1
 
-    def delete(self, key):
-        """削除
-
-        指定したkeyの要素を削除する。
-
-        Args:
-            key (any): キー。
-
-        Return:
-            bool: 指定したキーが存在するならTrue、しないならFalse。
-
-        """
+    def _del(self, key):
         v = self.root
         history = []
+        res = self.default
         while v is not None:
             if key < v.key:
                 history.append((v, 1))
@@ -205,9 +193,10 @@ class AVLTree:
                 history.append((v, -1))
                 v = v.rch
             else:
+                res = v.val
                 break
         else:
-            return False
+            return False, res
 
         if v.lch is not None:
             history.append((v, 1))
@@ -231,7 +220,7 @@ class AVLTree:
                 p.rch = c
         else:
             self.root = c
-            return True
+            return True, res
 
         while history:
             new_p = None
@@ -259,7 +248,7 @@ class AVLTree:
             if new_p is not None:
                 if len(history) == 0:
                     self.root = new_p
-                    return True
+                    return True, res
                 gp, gpdir = history[-1]
                 if gpdir == 1:
                     gp.lch = new_p
@@ -272,7 +261,33 @@ class AVLTree:
             p, pdir = history.pop()
             p.size -= 1
 
-        return True
+        return True, res
+
+    def delete(self, key):
+        """削除
+
+        指定したkeyの要素を削除する。
+
+        Args:
+            key (any): キー。
+
+        Return:
+            bool: 指定したキーが存在するならTrue、しないならFalse。
+        """
+        return self._del(key)[0]
+
+    def pop(self, key):
+        """削除(pop)
+
+        指定したkeyの要素を削除する。
+
+        Args:
+            key (any): キー。
+
+        Return:
+            bool: 指定したキーが存在するならそのvalue、しないならdefault。
+        """
+        return self._del(key)[1]
 
     def contains(self, key):
         """キーの存在チェック
@@ -284,7 +299,6 @@ class AVLTree:
 
         Return:
             bool: 指定したキーが存在するならTrue、しないならFalse。
-
         """
         v = self.root
         while v is not None:
@@ -296,7 +310,7 @@ class AVLTree:
                 return True
         return False
 
-    def get(self, key):
+    def get(self, key, default=None):
         """値の取り出し
 
         指定したkeyの値を返す。
@@ -305,8 +319,8 @@ class AVLTree:
             key (any): キー。
 
         Return:
-            any: 指定したキーが存在するならそのオブジェクト。存在しなければvaldefault
-
+            any: 指定したキーが存在するならそのオブジェクト。存在しなければdefaultを返す。
+                 defaultがNoneであればself.defaultをinsertし、self.defaultを返す。
         """
         v = self.root
         while v is not None:
@@ -316,13 +330,15 @@ class AVLTree:
                 v = v.rch
             else:
                 return v.val
-        self.insert(key)
-        return self[key]
+        if default is None:
+            self.insert(key, self.default)
+            return self.default
+        return default
 
     def lower_bound(self, key):
         """下限つき探索
 
-        指定したkey以上で最小のキーを見つける。[key,inf)で最小
+        指定したkey以上で最小のキーを見つける。[key,inf)で最小。
 
         Args:
             key (any): キーの下限。
@@ -342,10 +358,24 @@ class AVLTree:
                 v = v.rch
         return ret
 
+    ge = lower_bound
+
+    def gt(self, key):
+        ret = None
+        v = self.root
+        while v is not None:
+            if v.key > key:
+                if ret is None or ret > v.key:
+                    ret = v.key
+                v = v.lch
+            else:
+                v = v.rch
+        return ret
+
     def upper_bound(self, key):
         """上限つき探索
 
-        指定したkey未満で最大のキーを見つける。[-inf,key)で最大
+        指定したkey未満で最大のキーを見つける。[-inf,key)で最大。
 
         Args:
             key (any): キーの上限。
@@ -365,8 +395,22 @@ class AVLTree:
                 v = v.lch
         return ret
 
+    lt = upper_bound
+
+    def le(self, key):
+        ret = None
+        v = self.root
+        while v is not None:
+            if v.key <= key:
+                if ret is None or ret < v.key:
+                    ret = v.key
+                v = v.rch
+            else:
+                v = v.lch
+        return ret
+
     def find_kth_element(self, k):
-        """小さい方からk番目の要素を見つける
+        """小さい方からk番目の要素を見つける。
 
         Args:
             k (int): 何番目の要素か(0オリジン)。
@@ -388,12 +432,12 @@ class AVLTree:
         return None
 
     def getmin(self):
-        '''
+        """
         Return:
             any: 存在するキーの最小値
-        '''
-        if len(self) == 0:
-            raise Exception('empty')
+        """
+        if self.root is None:
+            raise IndexError("getmin from empty AVLTree")
         ret = None
         v = self.root
         while True:
@@ -404,12 +448,12 @@ class AVLTree:
         return ret.key
 
     def getmax(self):
-        '''
+        """
         Return:
             any: 存在するキーの最大値
-        '''
-        if len(self) == 0:
-            raise Exception('empty')
+        """
+        if self.root is None:
+            raise IndexError("getmax from empty AVLTree")
         ret = None
         v = self.root
         while True:
@@ -420,13 +464,13 @@ class AVLTree:
         return ret.key
 
     def popmin(self):
-        '''
-        存在するキーの最小値をpopする
+        """存在するキーの最小値をpopする。
+
         Return:
             any: popした値
-        '''
-        if len(self) == 0:
-            raise Exception('empty')
+        """
+        if self.root is None:
+            raise IndexError("popmin from empty AVLTree")
         ret = None
         v = self.root
         while True:
@@ -434,17 +478,16 @@ class AVLTree:
             v = v.lch
             if v is None:
                 break
-        del self[ret.key]
-        return ret.key
+        return self.pop(ret.key)
 
     def popmax(self):
-        '''
-        存在するキーの最大値をpopする
+        """存在するキーの最大値をpopする。
+
         Return:
             any: popした値
-        '''
-        if len(self) == 0:
-            raise Exception('empty')
+        """
+        if self.root is None:
+            raise IndexError("popmax from empty AVLTree")
         ret = None
         v = self.root
         while True:
@@ -452,24 +495,22 @@ class AVLTree:
             v = v.rch
             if v is None:
                 break
-        del self[ret.key]
-        return ret.key
+        return self.pop(ret.key)
 
     def popkth(self, k):
-        '''
-        存在するキーの小さい方からk番目をpopする
+        """存在するキーの小さい方からk番目をpopする。
+
         Return:
             any: popした値
-        '''
+        """
         key = self.find_kth_element(k)
-        del self[key]
-        return key
+        return self.pop(key)
 
     def get_key_val(self):
-        '''
+        """
         Return:
             dict: 存在するキーとノード値をdictで出力
-        '''
+        """
         return dict(self.items())
 
     def _sorted_nodes(self):
@@ -523,4 +564,6 @@ class AVLTree:
         return self.root.size if self.root is not None else 0
 
     def __str__(self):
-        return str(type(self)) + '(' + str(self.get_key_val()) + ')'
+        return str(type(self)) + "(" + str(self.get_key_val()) + ")"
+
+    __repr__ = __str__
