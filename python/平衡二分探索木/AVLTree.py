@@ -184,7 +184,6 @@ class AVLTree:
     def _del(self, key):
         v = self.root
         history = []
-        res = self.default
         while v is not None:
             if key < v.key:
                 history.append((v, 1))
@@ -196,8 +195,11 @@ class AVLTree:
                 res = v.val
                 break
         else:
-            return False, res
-
+            if self.deepcopy:
+                val = copy.deepcopy(self.default)
+            else:
+                val = copy.copy(self.default)
+            return False, val
         if v.lch is not None:
             history.append((v, 1))
             lmax = v.lch
@@ -331,8 +333,12 @@ class AVLTree:
             else:
                 return v.val
         if default is None:
-            self.insert(key, self.default)
-            return self.default
+            if self.deepcopy:
+                val = copy.deepcopy(self.default)
+            else:
+                val = copy.copy(self.default)
+            self.insert(key, val)
+            return val
         return default
 
     def lower_bound(self, key):
@@ -541,6 +547,23 @@ class AVLTree:
     def items(self):
         for i in self._sorted_nodes():
             yield i.key, i.val
+
+    def get_range(self, l, r):
+        """keyが[l,r)の範囲を返す。"""
+        if self.root is None:
+            return
+        q = [(self.root, False)]
+        while q:
+            node, iscenter = q.pop()
+            if iscenter:
+                yield node.key, node.val
+            else:
+                if node.rch is not None and node.key < r:
+                    q.append((node.rch, False))
+                if l <= node.key < r:
+                    q.append((node, True))
+                if node.lch is not None and node.key >= l:
+                    q.append((node.lch, False))
 
     def __iter__(self):
         return self.keys()
