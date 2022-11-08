@@ -1,12 +1,13 @@
 def next_permutation(a: list, l: int = 0, r: int = None) -> bool:
+    # a[l,r)の次の組み合わせ
     if r is None:
-        r = len(a) - 1
-    for i in range(r - 1, l - 1, -1):
+        r = len(a)
+    for i in range(r - 2, l - 1, -1):
         if a[i] < a[i + 1]:
-            for j in range(r, i, -1):
+            for j in range(r - 1, i, -1):
                 if a[i] < a[j]:
                     a[i], a[j] = a[j], a[i]
-                    p, q = i + 1, r
+                    p, q = i + 1, r - 1
                     while p < q:
                         a[p], a[q] = a[q], a[p]
                         p += 1
@@ -25,14 +26,15 @@ def distinct_permutations(a: list, l: int = 0, r: int = None):
 
 
 def prev_permutation(a: list, l: int = 0, r: int = None) -> bool:
+    # a[l,r)の前の組み合わせ
     if r is None:
-        r = len(a) - 1
-    for i in range(r - 1, l - 1, -1):
+        r = len(a)
+    for i in range(r - 2, l - 1, -1):
         if a[i] > a[i + 1]:
-            for j in range(r, i, -1):
+            for j in range(r - 1, i, -1):
                 if a[i] > a[j]:
                     a[i], a[j] = a[j], a[i]
-                    p, q = i + 1, r
+                    p, q = i + 1, r - 1
                     while p < q:
                         a[p], a[q] = a[q], a[p]
                         p += 1
@@ -42,6 +44,7 @@ def prev_permutation(a: list, l: int = 0, r: int = None) -> bool:
 
 
 def partitions(a):
+    # グループ分けの方法
     q = [(0, [])]
     while q:
         l, res = q.pop()
@@ -79,3 +82,18 @@ def pairwise(n: int):
                 second += 1
         else:
             yield a
+
+
+def sum_combination(n, s):
+    # 合計がsとなるn個の非負整数の組み合わせ
+    if n == 1:
+        yield [s]
+        return
+    q = list(([x], x) for x in range(s + 1))
+    while q:
+        i, t = q.pop()
+        if len(i) == n - 1:
+            yield i + [s - t]
+        else:
+            for j in range(s - t + 1):
+                q.append((i + [j], t + j))
