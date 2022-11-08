@@ -97,3 +97,87 @@ def sum_combination(n, s):
         else:
             for j in range(s - t + 1):
                 q.append((i + [j], t + j))
+
+
+def number_of_permutation(a, mod: int = None):
+    # aの考えられる順列で、aが辞書順で何番目か
+    n = len(a)
+    perm_mod = [1]
+    for i in range(1, n + 1):
+        if mod is None:
+            perm_mod.append((i * perm_mod[-1]))
+        else:
+            perm_mod.append((i * perm_mod[-1]) % mod)
+
+    X = {s: i for i, s in enumerate(sorted(a), 1)}
+    T = FenwickTree(n, seq=[1] * n)
+
+    ans = 1
+    for i, s in enumerate(a, 1):
+        m = T.cumsum(X[s] - 1)
+        # まだ使っていない自分未満の要素の数
+        ans += m * perm_mod[n - i]
+        T.add(X[s], -1)
+    return ans
+
+
+def k_th_permutation(a, k: int):
+    # aを並び替えて考えられる順列で、k番目は何か
+    n = len(a)
+    perm = [1]
+    for i in range(1, n + 1):
+        perm.append((i * perm[-1]))
+
+    if k <= 0 or k > perm[-1]:
+        return None
+
+    X = {i: s for i, s in enumerate(sorted(a), 1)}
+    T = FenwickTree(n, seq=[1] * n)
+
+    j = k - 1  # 0-indexedで考える
+    ans = []
+    for i in range(n - 1, -1, -1):
+        idx = j // perm[i]
+        p, _ = T.lower_bound(idx + 1)
+        val = X[p]
+        ans.append(val)
+        j -= idx * perm[i]
+        T.add(p, -1)
+    return ans
+
+
+class FenwickTree:
+    def __init__(self, n, seq=None):
+        self.size = n
+        self.tree = [0] * (n + 1)
+        self.depth = n.bit_length()
+        if seq:
+            for i, s in enumerate(seq, 1):
+                self.add(i, s)
+
+    def cumsum(self, i):
+        s = 0
+        while i > 0:
+            s += self.tree[i]
+            i -= i & -i
+        return s
+
+    def rangesum(self, lft, rgt):
+        return self.cumsum(rgt) - self.cumsum(lft - 1)
+
+    def add(self, i, x):
+        while i <= self.size:
+            self.tree[i] += x
+            i += i & -i
+
+    def lower_bound(self, x):
+        if x <= 0:
+            return 0, 0
+        s = 0
+        pos = 0
+        for i in range(self.depth, -1, -1):
+            k = pos + (1 << i)
+            if k <= self.size and s + self.tree[k] < x:
+                s += self.tree[k]
+                pos += 1 << i
+        return pos + 1, s
