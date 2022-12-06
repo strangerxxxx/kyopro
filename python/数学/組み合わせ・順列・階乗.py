@@ -175,11 +175,6 @@ class Permutation:
 class Combinatorics:
     """
     前計算modあり組み合わせ
-    ex:
-    c=Combinatorics(100000,998244353)
-    ans=c.combination(456,123)
-    ans=c.permutation(456,123)
-    ans=c.homogeneous(456,123)
     """
 
     def __init__(self, n_max, mod=998244353):
@@ -189,6 +184,9 @@ class Combinatorics:
         self.fac, self.facinv = self.make_factorial_list(n_max)
 
     def combination(self, n, r):
+        """
+        return nCr
+        """
         if r < 0 or n < r:
             return 0
         if r > self.n_max:
@@ -197,6 +195,9 @@ class Combinatorics:
             self.facinv[n - r] % self.mod
 
     def permutation(self, n, r=None):
+        """
+        return nPr
+        """
         if r is None:
             r = n
         if r < 0 or n < r:
@@ -207,6 +208,7 @@ class Combinatorics:
 
     def homogeneous(self, n, r):
         """
+        return nHr
         n:separator + 1
         """
         if n <= 0 or r < 0:
