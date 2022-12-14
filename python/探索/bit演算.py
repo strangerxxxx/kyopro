@@ -5,6 +5,7 @@ def subsets(i: int) -> int:
         yield j
         j -= 1
         j &= i
+    # yield 0
 
 
 def under_bit(i: int) -> int:
@@ -21,18 +22,18 @@ def upper_bit(i: int) -> int:
     # 最上位bit
     # assert -(1 << 63) <= n < 1 << 63
     c = i
-    if c & 0xffffffff00000000:
-        c &= 0xffffffff00000000
-    if c & 0xffff0000ffff0000:
-        c &= 0xffff0000ffff0000
-    if c & 0xff00ff00ff00ff00:
-        c &= 0xff00ff00ff00ff00
-    if c & 0xf0f0f0f0f0f0f0f0:
-        c &= 0xf0f0f0f0f0f0f0f0
-    if c & 0xcccccccccccccccc:
-        c &= 0xcccccccccccccccc
-    if c & 0xaaaaaaaaaaaaaaaa:
-        c &= 0xaaaaaaaaaaaaaaaa
+    if c & 0xFFFFFFFF00000000:
+        c &= 0xFFFFFFFF00000000
+    if c & 0xFFFF0000FFFF0000:
+        c &= 0xFFFF0000FFFF0000
+    if c & 0xFF00FF00FF00FF00:
+        c &= 0xFF00FF00FF00FF00
+    if c & 0xF0F0F0F0F0F0F0F0:
+        c &= 0xF0F0F0F0F0F0F0F0
+    if c & 0xCCCCCCCCCCCCCCCC:
+        c &= 0xCCCCCCCCCCCCCCCC
+    if c & 0xAAAAAAAAAAAAAAAA:
+        c &= 0xAAAAAAAAAAAAAAAA
     return c
 
 
@@ -40,18 +41,18 @@ def upper_bit_pop(i: int) -> int:
     # 最上位bitを0にする
     # assert -(1 << 63) <= n < 1 << 63
     c = i
-    if c & 0xffffffff00000000:
-        c &= 0xffffffff00000000
-    if c & 0xffff0000ffff0000:
-        c &= 0xffff0000ffff0000
-    if c & 0xff00ff00ff00ff00:
-        c &= 0xff00ff00ff00ff00
-    if c & 0xf0f0f0f0f0f0f0f0:
-        c &= 0xf0f0f0f0f0f0f0f0
-    if c & 0xcccccccccccccccc:
-        c &= 0xcccccccccccccccc
-    if c & 0xaaaaaaaaaaaaaaaa:
-        c &= 0xaaaaaaaaaaaaaaaa
+    if c & 0xFFFFFFFF00000000:
+        c &= 0xFFFFFFFF00000000
+    if c & 0xFFFF0000FFFF0000:
+        c &= 0xFFFF0000FFFF0000
+    if c & 0xFF00FF00FF00FF00:
+        c &= 0xFF00FF00FF00FF00
+    if c & 0xF0F0F0F0F0F0F0F0:
+        c &= 0xF0F0F0F0F0F0F0F0
+    if c & 0xCCCCCCCCCCCCCCCC:
+        c &= 0xCCCCCCCCCCCCCCCC
+    if c & 0xAAAAAAAAAAAAAAAA:
+        c &= 0xAAAAAAAAAAAAAAAA
     return i - c
 
 
@@ -59,11 +60,25 @@ def popcount(n: int) -> int:
     # assert -(1 << 63) <= n < 1 << 63
     c = (n & 0x5555555555555555) + ((n >> 1) & 0x5555555555555555)
     c = (c & 0x3333333333333333) + ((c >> 2) & 0x3333333333333333)
-    c = (c & 0x0f0f0f0f0f0f0f0f) + ((c >> 4) & 0x0f0f0f0f0f0f0f0f)
-    c = (c & 0x00ff00ff00ff00ff) + ((c >> 8) & 0x00ff00ff00ff00ff)
-    c = (c & 0x0000ffff0000ffff) + ((c >> 16) & 0x0000ffff0000ffff)
-    c = (c & 0x00000000ffffffff) + ((c >> 32) & 0x00000000ffffffff)
-    return c
+    c = (c & 0x0F0F0F0F0F0F0F0F) + ((c >> 4) & 0x0F0F0F0F0F0F0F0F)
+    c = (c & 0x00FF00FF00FF00FF) + ((c >> 8) & 0x00FF00FF00FF00FF)
+    c = (c & 0x0000FFFF0000FFFF) + ((c >> 16) & 0x0000FFFF0000FFFF)
+    return (c & 0x00000000FFFFFFFF) + ((c >> 32) & 0x00000000FFFFFFFF)
+
+
+def popcount32(n: int):
+    c = (n & 0x55555555) + (n >> 1 & 0x55555555)
+    c = (c & 0x33333333) + (c >> 2 & 0x33333333)
+    c = (c & 0x0F0F0F0F) + (c >> 4 & 0x0F0F0F0F)
+    c = (c & 0x00FF00FF) + (c >> 8 & 0x00FF00FF)
+    return (c & 0x0000FFFF) + (c >> 16 & 0x0000FFFF)
+
+
+def popcount16(n: int):
+    c = (n & 0x5555) + (n >> 1 & 0x5555)
+    c = (c & 0x3333) + (c >> 2 & 0x3333)
+    c = (c & 0x0F0F) + (c >> 4 & 0x0F0F)
+    return (c & 0x00FF) + (c >> 8 & 0x00FF)
 
 
 def multiple_popcount(n: int) -> int:
@@ -80,11 +95,14 @@ class Popcount:
     def __init__(self) -> None:
         self.POPCOUNT_TABLE16 = [0] * (1 << 16)
         for index in range(len(self.POPCOUNT_TABLE16)):
-            self.POPCOUNT_TABLE16[index] = (
-                index & 1) + self.POPCOUNT_TABLE16[index >> 1]
+            self.POPCOUNT_TABLE16[index] = (index & 1) + self.POPCOUNT_TABLE16[
+                index >> 1
+            ]
 
     def __call__(self, v: int) -> int:
-        return (self.POPCOUNT_TABLE16[v & 0xffff] +
-                self.POPCOUNT_TABLE16[(v >> 16) & 0xffff] +
-                self.POPCOUNT_TABLE16[(v >> 32) & 0xffff] +
-                self.POPCOUNT_TABLE16[(v >> 48)])
+        return (
+            self.POPCOUNT_TABLE16[v & 0xFFFF]
+            + self.POPCOUNT_TABLE16[(v >> 16) & 0xFFFF]
+            + self.POPCOUNT_TABLE16[(v >> 32) & 0xFFFF]
+            + self.POPCOUNT_TABLE16[(v >> 48)]
+        )
