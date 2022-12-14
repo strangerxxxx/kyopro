@@ -9,14 +9,10 @@ def strongly_connected_components_scipy():
     print(result)
 
 
-def strongly_connected_components():
-    n, m = map(int, input().split())
+def strongly_connected_components(n, arrays):
     edge = [[] for _ in range(n)]
     redge = [[] for _ in range(n)]
-    for _ in range(m):
-        a, b = map(int, input().split())
-        a -= 1
-        b -= 1
+    for a, b in arrays:
         edge[a].append(b)
         redge[b].append(a)
     used = [False] * n
@@ -36,30 +32,26 @@ def strongly_connected_components():
                 for nextp in edge[point]:
                     if not used[nextp]:
                         stack.append(nextp)
-    group = 0
-    res = [-1] * n
+    group_count = 0
+    group_index = [-1] * n
     for i in reversed(order):
-        if res[i] == -1:
+        if group_index[i] == -1:
             stack = [i]
-            res[i] = group
+            group_index[i] = group_count
             while stack:
                 point = stack.pop()
                 for nextp in redge[point]:
-                    if res[nextp] == -1:
-                        res[nextp] = group
+                    if group_index[nextp] == -1:
+                        group_index[nextp] = group_count
                         stack.append(nextp)
-            group += 1
-    return group, res
+            group_count += 1
+    return group_count, group_index
 
 
-def strongly_connected_components2():
-    n, m = map(int, input().split())
+def strongly_connected_components2(n, arrays):
     edge = [[] for _ in range(n)]
     redge = [[] for _ in range(n)]
-    for _ in range(m):
-        a, b = map(int, input().split())
-        a -= 1
-        b -= 1
+    for a, b in arrays:
         edge[a].append(b)
         redge[b].append(a)
     used = [False] * n
@@ -79,20 +71,37 @@ def strongly_connected_components2():
                 for nextp in edge[point]:
                     if not used[nextp]:
                         stack.append(nextp)
-    group = 0
+    group_count = 0
     groups = []
     res = [-1] * n
     for i in reversed(order):
         if res[i] == -1:
             stack = [i]
-            res[i] = group
+            res[i] = group_count
             groups.append([i])
             while stack:
                 point = stack.pop()
                 for nextp in redge[point]:
                     if res[nextp] == -1:
-                        res[nextp] = group
+                        res[nextp] = group_count
                         groups[-1].append(nextp)
                         stack.append(nextp)
-            group += 1
-    return groups
+            group_count += 1
+    return group_count, groups
+
+
+def construct_dag(n, arrays, groups):
+    edge = [[] for _ in range(n)]
+    for a, b in arrays:
+        edge[a].append(b)
+    inv_groups = [None] * n
+    for index, i in enumerate(groups):
+        for j in i:
+            inv_groups[j] = index
+    dag = [set() for _ in range(len(groups))]
+    for index, i in enumerate(groups):
+        for j in i:
+            for k in edge[j]:
+                if inv_groups[k] != index:
+                    dag[index].add(inv_groups[k])
+    return dag
