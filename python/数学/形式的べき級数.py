@@ -160,14 +160,14 @@ class FPS:
         self = self - other
         return self
 
-    def inv(self, d=-1):
+    def inv(self, size=None):
         n = len(self.Func)
         # assert n != 0 and self.Func[0] != 0
-        if d == -1:
-            d = n
-        # assert d > 0
+        if size is None:
+            size = n
+        # assert size > 0
         res = [pow(self.Func[0], self.mod - 2, self.mod)]
-        while len(res) < d:
+        while len(res) < size:
             m = len(res)
             f = [self.Func[i] for i in range(min(n, 2 * m))]
             r = res[:]
@@ -459,7 +459,8 @@ class FPS:
             m *= 2
         return self
 
-    def powfps(self, k, deg=-1):
+    def powfps(self, k):
+        # サイズを保ったまま累乗
         a = self.Func[:]
         n = len(self.Func)
         if k == 0:
@@ -515,3 +516,10 @@ def bostan_mori(p, q, n, mod=998244353):
         p = FPS(u[n & 1 :: 2])
         n >>= 1
     return p[0] * pow(q[0], mod - 2, mod) % mod
+
+
+def kitamasa(m, k, c, a):
+    p = FPS(a)
+    q = FPS([1] + [-x for x in c])
+    p = p * q
+    return bostan_mori(p, q, m)
