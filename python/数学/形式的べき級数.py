@@ -479,6 +479,8 @@ class FPS:
         return FPS(a)
 
     def pow(self, k):
+        if k == -1:
+            return self.inv()
         res = FPS([1])
         p = FPS(self.Func)
         while k:
@@ -513,8 +515,3 @@ def bostan_mori(p, q, n, mod=998244353):
         p = FPS(u[n & 1 :: 2])
         n >>= 1
     return p[0] * pow(q[0], mod - 2, mod) % mod
-
-
-a = FPS([1, -1, -1])
-b = FPS([0, 1])
-print(mori(b, a, int(input())))
