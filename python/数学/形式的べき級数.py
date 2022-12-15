@@ -521,5 +521,5 @@ def bostan_mori(p, q, n, mod=998244353):
 def kitamasa(m, k, c, a):
     p = FPS(a)
     q = FPS([1] + [-x for x in c])
-    p = p * q
+    p = (p * q).resize(k)
     return bostan_mori(p, q, m)
