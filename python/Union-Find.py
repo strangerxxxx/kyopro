@@ -32,8 +32,6 @@ class UnionFind:
         y = self.find(y)
         if x == y:
             return False
-        if y > x:
-            x, y = y, x
         self.parent[x] += self.parent[y]
         self.parent[y] = x
         self.groups -= 1
@@ -44,8 +42,6 @@ class UnionFind:
         y = self.find(y)
         if x == y:
             return False
-        if x > y:
-            x, y = y, x
         self.parent[x] += self.parent[y]
         self.parent[y] = x
         self.groups -= 1
@@ -72,6 +68,7 @@ class UnionFind:
 
     def all_group_members(self) -> dict:
         from collections import defaultdict
+
         d = defaultdict(list)
         for i in range(self.n):
             p = self.find(i)
@@ -79,8 +76,11 @@ class UnionFind:
         return d
 
     def __str__(self) -> str:
-        return '\n'.join('{}: {}'.format(k, v)
-                         for k, v in self.all_group_members().items())
+        return "\n".join(
+            "{}: {}".format(k, v) for k, v in self.all_group_members().items()
+        )
+
+    __repr__ = __str__
 
 
 class PartiallyPersistentUnionFind:
@@ -119,6 +119,7 @@ class PartiallyPersistentUnionFind:
 
     def size(self, x, t) -> int:
         from bisect import bisect_right
+
         y = self.find(x, t)
         idx = bisect_right(self.S[y], (t, self.INF)) - 1
         return self.S[y][idx]
@@ -187,5 +188,9 @@ class WeightedUnionFind:
 
     def __str__(self) -> str:
         d, w = self.all_group_members()
-        return '\n'.join('{}: {} : {}'.format(k, v, x)
-                         for (k, v), (_, x) in zip(d.items(), w.items()))
+        return "\n".join(
+            "{}: {} : {}".format(k, v, x)
+            for (k, v), (_, x) in zip(d.items(), w.items())
+        )
+
+    __repr__ = __str__
