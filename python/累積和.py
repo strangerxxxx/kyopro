@@ -59,6 +59,17 @@ class static_range_sum():
         return self.a[r] - self.a[l]
 
 
-l = [1, 8, 7, 3, 2]
-print(accumulate(l))
-print(accumulate(l, 0))
+def zeta(f, dimension: int):
+    # f をゼータ変換
+    for i in range(dimension):
+        for j in range(1 << dimension):
+            if (j & (1 << i)):
+                f[j] += f[j ^ (1 << i)]
+
+
+def mebius(g, dimension: int):
+    # g をメビウス変換
+    for i in range(dimension):
+        for j in range(1 << dimension):
+            if (j & (1 << i)):
+                g[j] -= g[j ^ (1 << i)]
