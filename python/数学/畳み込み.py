@@ -1,10 +1,11 @@
 # https://maspypy.com/%e6%95%b0%e5%ad%a6%e3%83%bbnumpy-%e9%ab%98%e9%80%9f%e3%83%95%e3%83%bc%e3%83%aa%e3%82%a8%e5%a4%89%e6%8f%9bfft%e3%81%ab%e3%82%88%e3%82%8b%e7%95%b3%e3%81%bf%e8%be%bc%e3%81%bf
 def ifft():
     # https://atcoder.jp/contests/atc001/tasks/fft_c
-    '''
+    """
     i円のものがa[i]個とb[i]個ある食堂でのk(<=2n)円になる組み合わせ
-    '''
+    """
     import numpy as np
+
     n = int(input())
     qrtn = 2 ** int(np.ceil(np.log2(2 * n - 1)))
     a = np.zeros(qrtn)
@@ -14,20 +15,21 @@ def ifft():
     # a = np.array(input().split(), dtype=int)
     # b = np.array(input().split(), dtype=int)
     c = np.fft.ifft(np.fft.fft(a) * np.fft.fft(b))
-    ans = ["0"] + ["{}".format(int(x)) for x in np.real(c[:2 * n - 1] + 0.5)]
+    ans = ["0"] + ["{}".format(int(x)) for x in np.real(c[: 2 * n - 1] + 0.5)]
     for i in ans:
         print(i)
 
 
 def convolve():
     import numpy as np
+
     a = np.array(input().split(), dtype=int)
     b = np.array(input().split(), dtype=int)
     c = np.convolve(a, b)
     print(*c)
 
 
-class FFT_MOD():
+class FFT_MOD:
     def primitive_root_constexpr(self, m):
         if m == 2:
             return 1
@@ -42,25 +44,25 @@ class FFT_MOD():
         divs = [0] * 20
         divs[0] = 2
         cnt = 1
-        x = (m - 1)//2
-        while(x % 2 == 0):
-            x //= 2
+        x = (m - 1) // 2
+        while not x & 1:
+            x >>= 1
         i = 3
-        while(i * i <= x):
-            if (x % i == 0):
+        while i * i <= x:
+            if not x & 1:
                 divs[cnt] = i
                 cnt += 1
-                while(x % i == 0):
+                while x % i == 0:
                     x //= i
             i += 2
         if x > 1:
             divs[cnt] = x
             cnt += 1
         g = 2
-        while(1):
+        while True:
             ok = True
             for i in range(cnt):
-                if pow(g, (m - 1)//divs[i], m) == 1:
+                if pow(g, (m - 1) // divs[i], m) == 1:
                     ok = False
                     break
             if ok:
@@ -69,10 +71,11 @@ class FFT_MOD():
 
     def bsf(self, x):
         res = 0
-        while(x % 2 == 0):
+        while not x & 1:
             res += 1
-            x //= 2
+            x >>= 1
         return res
+
     butterfly_first = True
     butterfly_inv_first = True
     sum_e = [0] * 30
@@ -92,14 +95,14 @@ class FFT_MOD():
             cnt2 = self.bsf(self.mod - 1)
             e = pow(self.g, (self.mod - 1) >> cnt2, self.mod)
             ie = pow(e, self.mod - 2, self.mod)
-            for i in range(cnt2, 1,  -1):
+            for i in range(cnt2, 1, -1):
                 es[i - 2] = e
                 ies[i - 2] = ie
                 e = (e * e) % self.mod
                 ie = (ie * ie) % self.mod
             now = 1
             for i in range(cnt2 - 2):
-                self.sum_e[i] = ((es[i] * now) % self.mod)
+                self.sum_e[i] = (es[i] * now) % self.mod
                 now *= ies[i]
                 now %= self.mod
         for ph in range(1, h + 1):
@@ -129,17 +132,17 @@ class FFT_MOD():
             cnt2 = self.bsf(self.mod - 1)
             e = pow(self.g, (self.mod - 1) >> cnt2, self.mod)
             ie = pow(e, self.mod - 2, self.mod)
-            for i in range(cnt2, 1,  -1):
+            for i in range(cnt2, 1, -1):
                 es[i - 2] = e
                 ies[i - 2] = ie
                 e = (e * e) % self.mod
                 ie = (ie * ie) % self.mod
             now = 1
             for i in range(cnt2 - 2):
-                self.sum_ie[i] = ((ies[i] * now) % self.mod)
+                self.sum_ie[i] = (ies[i] * now) % self.mod
                 now *= es[i]
                 now %= self.mod
-        for ph in range(h, 0,  -1):
+        for ph in range(h, 0, -1):
             w = 1 << (ph - 1)
             p = 1 << (h - ph)
             inow = 1
@@ -158,7 +161,7 @@ class FFT_MOD():
     def convolution(self, a, b):
         n = len(a)
         m = len(b)
-        if not(a) or not(b):
+        if not (a) or not (b):
             return []
         if min(n, m) <= 40:
             if n < m:
@@ -182,4 +185,15 @@ class FFT_MOD():
         iz = pow(z, self.mod - 2, self.mod)
         for i in range(n + m - 1):
             c[i] = (c[i] * iz) % self.mod
-        return c[:n + m - 1]
+        return c[: n + m - 1]
+
+    def bostan_mori(self, p, q, n):
+        # [x^n] P(x)/Q(x)
+        while n:
+            qi = [self.mod - x if i & 1 and x else x for i, x in enumerate(q)]
+            u = self.convolution(p, qi)
+            v = self.convolution(q, qi)
+            q = v[::2]
+            p = u[n & 1 :: 2]
+            n >>= 1
+        return p[0] * pow(q[0], self.mod - 2, self.mod) % self.mod
