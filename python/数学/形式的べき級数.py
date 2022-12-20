@@ -133,10 +133,9 @@ class FPS:
         return self
 
     def __add__(self, other):
-        res = [0 for i in range(max(len(self.Func), len(other.Func)))]
+        res = [0] * max(len(self.Func), len(other.Func))
         for i, x in enumerate(self.Func):
-            res[i] += x
-            res[i] %= self.mod
+            res[i] = x
         for i, x in enumerate(other.Func):
             res[i] += x
             res[i] %= self.mod
@@ -147,10 +146,9 @@ class FPS:
         return self
 
     def __sub__(self, other):
-        res = [0 for i in range(max(len(self.Func), len(other.Func)))]
+        res = [0] * max(len(self.Func), len(other.Func))
         for i, x in enumerate(self.Func):
-            res[i] += x
-            res[i] %= self.mod
+            res[i] = x
         for i, x in enumerate(other.Func):
             res[i] -= x
             res[i] %= self.mod
@@ -203,7 +201,7 @@ class FPS:
                 f[i] *= iz
                 f[i] %= self.mod
             res += f[:m]
-        return FPS(res[:d])
+        return FPS(res[:size])
 
     def __truediv__(self, other):
         if type(other) == int:
@@ -219,39 +217,34 @@ class FPS:
 
     def __lshift__(self, d):
         n = len(self.Func)
-        self.Func = [0] * d + self.Func
-        return FPS(self.Func[:n])
+        return FPS([0] * min(d, n) + self.Func[:-d])
 
     def __ilshift__(self, d):
-        self = self << d
+        n = len(self.Func)
+        self.Func = [0] * min(d, n) + self.Func[:-d]
         return self
 
     def __rshift__(self, d):
-        n = len(self.Func)
-        self.Func = self.Func[min(n, d) :]
-        self.Func += [0] * (n - len(self.Func))
-        return FPS(self.Func)
+        return FPS(self.Func[d:])
 
     def __irshift__(self, d):
-        self = self >> d
+        del self.Func[:d]
         return self
 
     def __str__(self):
         return f"FPS({self.Func})"
 
     def diff(self):
-        n = len(self.Func)
-        ret = [0 for i in range(max(0, n - 1))]
-        for i in range(1, n):
-            ret[i - 1] = (self.Func[i] * i) % self.mod
-        return FPS(ret)
+        return FPS([(j * i) % self.mod for i, j in enumerate(self.Func[1:], start=1)])
 
     def integral(self):
-        n = len(self.Func)
-        ret = [0 for i in range(n + 1)]
-        for i in range(n):
-            ret[i + 1] = self.Func[i] * pow(i + 1, self.mod - 2, self.mod) % self.mod
-        return FPS(ret)
+        return FPS(
+            [0]
+            + [
+                j * pow(i + 1, self.mod - 2, self.mod) % self.mod
+                for i, j in enumerate(self.Func)
+            ]
+        )
 
     def log(self, deg=-1):
         # assert self.Func[0] == 1
@@ -334,10 +327,11 @@ class FPS:
     def resize(self, size=None):
         if size is None or len(self.Func) == size:
             return self
-        elif len(self.Func) < size:
-            return FPS(self.Func + [0] * (size - len(self.Func)))
+        if len(self.Func) < size:
+            self.Func += [0] * (size - len(self.Func))
         else:
-            return FPS(self.Func[:size])
+            del self.Func[size:]
+        return self
 
     def exp(self, deg=-1):
         n = len(self.Func)
@@ -461,35 +455,29 @@ class FPS:
 
     def powfps(self, k):
         # サイズを保ったまま累乗
-        a = self.Func[:]
+        res = self.Func[:]
         n = len(self.Func)
         if k == 0:
             return FPS([int(i == 0) for i in range(n)])
         l = 0
-        while l < len(a) and not a[l]:
+        while l < len(res) and not res[l]:
             l += 1
         if l * k >= n:
             return FPS([0] * n)
-        ic = pow(a[l], self.mod - 2, self.mod)
-        pc = pow(a[l], k, self.mod)
-        a = FPS([(a[i] * ic) % self.mod for i in range(l, len(a))]).log()
-        a *= k
-        a = a.exp()
-        a *= pc
-        a = [0] * (l * k) + a.Func[: n - l * k]
-        return FPS(a)
+        ic = pow(res[l], self.mod - 2, self.mod)
+        pc = pow(res[l], k, self.mod)
+        res = FPS([(res[i] * ic) % self.mod for i in range(l, len(res))]).log()
+        res *= k
+        res = res.exp()
+        res *= pc
+        res = [0] * (l * k) + res.Func[: n - l * k]
+        return FPS(res)
 
     def pow(self, k):
         if k == -1:
             return self.inv()
-        res = FPS([1])
-        p = FPS(self.Func)
-        while k:
-            if k & 1:
-                res *= p
-            p *= p
-            k >>= 1
-        return res
+        res = FPS(self.Func).resize((len(self) - 1) * k + 1)
+        return res.powfps(k)
 
     __pow__ = pow
 
@@ -509,7 +497,7 @@ class FPS:
 def bostan_mori(p, q, n, mod=998244353):
     # [x^n] P(x)/Q(x)
     while n:
-        qi = FPS([x * (1 - 2 * (i & 1)) % mod for i, x in enumerate(q)])
+        qi = FPS([mod - x if i & 1 and x else x for i, x in enumerate(q)])
         u = p * qi
         v = q * qi
         q = FPS(v[::2])
@@ -520,6 +508,6 @@ def bostan_mori(p, q, n, mod=998244353):
 
 def kitamasa(m, k, c, a):
     p = FPS(a)
-    q = FPS([1] + [-x for x in c])
+    q = FPS([1] + [998244353 - x for x in c])
     p = (p * q).resize(k)
     return bostan_mori(p, q, m)
