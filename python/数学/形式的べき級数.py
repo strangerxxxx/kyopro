@@ -64,12 +64,9 @@ class FPS:
                 offset = s << (h - ph + 1)
                 for i in range(p):
                     l = a[i + offset]
-                    r = a[i + offset + p] * now
-                    r %= self.mod
-                    a[i + offset] = l + r
-                    a[i + offset] %= self.mod
-                    a[i + offset + p] = l - r
-                    a[i + offset + p] %= self.mod
+                    r = a[i + offset + p] * now % self.mod
+                    a[i + offset] = (l + r) % self.mod
+                    a[i + offset + p] = (l - r) % self.mod
                 now *= self.sum_e[(~s & -~s).bit_length() - 1]
                 now %= self.mod
         return a
@@ -86,23 +83,20 @@ class FPS:
                 for i in range(p):
                     l = a[i + offset]
                     r = a[i + offset + p]
-                    a[i + offset] = l + r
-                    a[i + offset] %= self.mod
-                    a[i + offset + p] = (l - r) * inow
-                    a[i + offset + p] %= self.mod
+                    a[i + offset] = (l + r) % self.mod
+                    a[i + offset + p] = (l - r) * inow % self.mod
                 inow *= self.sum_ie[(~s & -~s).bit_length() - 1]
                 inow %= self.mod
         return a
 
     def __mul__(self, other):
-        if type(other) == int:
-            ret = [(x * other) % self.mod for x in self.Func]
-            return FPS(ret)
-        a = self.Func
-        b = other.Func
+        if isinstance(other, int):
+            return FPS([x * other for x in self.Func])
+        a = self.Func[:]
+        b = other.Func[:]
         n = len(a)
         m = len(b)
-        if not (a) or not (b):
+        if not n or not m:
             return FPS([])
         if min(n, m) <= 40:
             if n < m:
@@ -115,44 +109,32 @@ class FPS:
                     res[i + j] %= self.mod
             return FPS(res)
         z = 1 << ((n + m - 2).bit_length())
-        a = a + [0] * (z - n)
-        b = b + [0] * (z - m)
-        a = self.butterfly(a)
-        b = self.butterfly(b)
-        c = [0] * z
-        for i in range(z):
-            c[i] = (a[i] * b[i]) % self.mod
+        a += [0] * (z - n)
+        b += [0] * (z - m)
+        self.butterfly(a)
+        self.butterfly(b)
+        c = [i * j % self.mod for i, j in zip(a, b)]
         self.butterfly_inv(c)
         iz = pow(z, self.mod - 2, self.mod)
-        for i in range(n + m - 1):
-            c[i] = (c[i] * iz) % self.mod
-        return FPS(c[: n + m - 1])
+        return FPS([c[i] * iz for i in range(n + m - 1)])
 
     def __imul__(self, other):
         self = self * other
         return self
 
     def __add__(self, other):
-        res = [0] * max(len(self.Func), len(other.Func))
-        for i, x in enumerate(self.Func):
-            res[i] = x
-        for i, x in enumerate(other.Func):
-            res[i] += x
-            res[i] %= self.mod
-        return FPS(res)
+        from itertools import zip_longest
+
+        return FPS([x + y for x, y in zip_longest(self.Func, other.Func, fillvalue=0)])
 
     def __iadd__(self, other):
         self = self + other
         return self
 
     def __sub__(self, other):
-        res = [0] * max(len(self.Func), len(other.Func))
-        for i, x in enumerate(self.Func):
-            res[i] = x
-        for i, x in enumerate(other.Func):
-            res[i] -= x
-            res[i] %= self.mod
-        return FPS(res)
+        from itertools import zip_longest
+
+        return FPS([x - y for x, y in zip_longest(self.Func, other.Func, fillvalue=0)])
 
     def __isub__(self, other):
         self = self - other
@@ -197,17 +179,13 @@ class FPS:
             iz = pow(2 * m, self.mod - 2, self.mod)
             iz *= -iz
             iz %= self.mod
-            for i in range(m):
-                f[i] *= iz
-                f[i] %= self.mod
-            res += f[:m]
+            res += [x * iz % self.mod for x in f[:m]]
         return FPS(res[:size])
 
     def __truediv__(self, other):
-        if type(other) == int:
+        if isinstance(other, int):
             invother = pow(other, self.mod - 2, self.mod)
-            ret = [(x * invother) % self.mod for x in self.Func]
-            return FPS(ret)
+            return FPS([x * invother for x in self.Func])
         # assert other.Func[0] != 0
         return self * (other.inv())
 
@@ -460,13 +438,13 @@ class FPS:
         if k == 0:
             return FPS([int(i == 0) for i in range(n)])
         l = 0
-        while l < len(res) and not res[l]:
+        while l < n and not res[l]:
             l += 1
         if l * k >= n:
             return FPS([0] * n)
         ic = pow(res[l], self.mod - 2, self.mod)
         pc = pow(res[l], k, self.mod)
-        res = FPS([(res[i] * ic) % self.mod for i in range(l, len(res))]).log()
+        res = FPS([res[i] * ic for i in range(l, len(res))]).log()
         res *= k
         res = res.exp()
         res *= pc
