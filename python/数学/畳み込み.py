@@ -1,9 +1,6 @@
 # https://maspypy.com/%e6%95%b0%e5%ad%a6%e3%83%bbnumpy-%e9%ab%98%e9%80%9f%e3%83%95%e3%83%bc%e3%83%aa%e3%82%a8%e5%a4%89%e6%8f%9bfft%e3%81%ab%e3%82%88%e3%82%8b%e7%95%b3%e3%81%bf%e8%be%bc%e3%81%bf
 def ifft():
     # https://atcoder.jp/contests/atc001/tasks/fft_c
-    """
-    i円のものがa[i]個とb[i]個ある食堂でのk(<=2n)円になる組み合わせ
-    """
     import numpy as np
 
     n = int(input())
@@ -20,13 +17,71 @@ def ifft():
         print(i)
 
 
-def convolve():
+def convolution(a, b, mod=998244353, s=10):
     import numpy as np
 
-    a = np.array(input().split(), dtype=int)
-    b = np.array(input().split(), dtype=int)
-    c = np.convolve(a, b)
-    print(*c)
+    def _convolution(F, G):
+        n, m = len(F), len(G)
+        l = 1 << (n + m - 2).bit_length()
+        T = np.fft.rfft(F, l) * np.fft.rfft(G, l)
+        res = np.fft.irfft(T, l)[: n + m - 1]
+        return np.rint(res).astype(np.int64)
+
+    F = np.array(a, dtype=np.int64)
+    G = np.array(b, dtype=np.int64)
+
+    s2 = s << 1
+    mask = (1 << s) - 1
+
+    m0, m1, m2 = F & mask, (F >> s) & mask, F >> s2
+    n0, n1, n2 = G & mask, (G >> s) & mask, G >> s2
+
+    p_0 = m0 + m2
+    p0 = m0
+    p1 = p_0 + m1
+    pm1 = p_0 - m1
+    pm2 = ((pm1 + m2) << 1) - m0
+    pinf = m2
+
+    q_0 = n0 + n2
+    q0 = n0
+    q1 = q_0 + n1
+    qm1 = q_0 - n1
+    qm2 = ((qm1 + n2) << 1) - n0
+    qinf = n2
+
+    r0 = _convolution(p0, q0)
+    r1 = _convolution(p1, q1)
+    rm1 = _convolution(pm1, qm1)
+    rm2 = _convolution(pm2, qm2)
+    rinf = _convolution(pinf, qinf)
+
+    r_0 = r0
+    r_4 = rinf
+    r_3 = (rm2 - r1) // 3
+    r_1 = (r1 - rm1) >> 1
+    r_2 = rm1 - r0
+    r_3 = ((r_2 - r_3) >> 1) + (rinf << 1)
+    r_2 += r_1 - r_4
+    r_1 -= r_3
+
+    res = ((r_4 << s2) + (r_3 << s) + r_2) % mod
+    return ((res << s2) + (r_1 << s) + r_0) % mod
+
+
+def bostan_mori(Q, P, n, mod=998244353):
+    import numpy as np
+
+    while n:
+        R = np.empty_like(Q)
+        R[::2] = Q[::2]
+        R[1::2] = -Q[1::2]
+        P = convolution(P, R, mod)
+        Q = convolution(Q, R, mod)
+        P = P[n & 1 :: 2]
+        Q = Q[::2]
+        n >>= 1
+    return P[0] * pow(Q[0], mod - 2, mod) % mod
 
 
 class FFT_MOD:
@@ -197,3 +252,8 @@ class FFT_MOD:
             p = u[n & 1 :: 2]
             n >>= 1
         return p[0] * pow(q[0], self.mod - 2, self.mod) % self.mod
+
+    def kitamasa(self, m, k, c, a):
+        q = [1] + [self.mod - x if x else 0 for x in c]
+        p = self.convolution(a, q)[:k]
+        return self.bostan_mori(p, q, m)
