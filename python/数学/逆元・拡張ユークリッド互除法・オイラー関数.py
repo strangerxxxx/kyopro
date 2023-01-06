@@ -24,7 +24,8 @@ def inv(a, m):
 
 def inv_calc(a, b, m):
     # ax == b mod mとなる最小のx : mは非素数でも可
-    import math, functools
+    import math
+    import functools
 
     d = functools.reduce(math.gcd, (a, b, m))
     a, b, m = a // d, b // d, m // d
