@@ -32,29 +32,34 @@ class HeapDict:
         return self.h[0]
 
 
-class multiDict:
-    def __init__(self):
-        self.d = {}
-
-    def insert(self, x):
-        if x not in self.d:
-            self.d[x] = 1
+class multiDict(dict):
+    def insert(self, key, val=1):
+        if key not in self:
+            self[key] = val
         else:
-            self.d[x] += 1
+            self[key] += val
 
-    def erase(self, x):
-        if x not in self.d or self.d[x] == 0:
-            raise KeyError(f"{x} is not in multiDict")
+    def erase(self, key, val=1):
+        if key not in self:
+            raise KeyError(f"{key} is not in multiDict")
+        if self[key] < val:
+            raise KeyError(
+                f"value({val}) is larger than multiDict[{key}] contains({self[key]})"
+            )
+        if self[key] == val:
+            del self[key]
         else:
-            self.d[x] -= 1
+            self[key] -= val
 
-    def eraseall(self, x):
-        del self.d[x]
+    def eraseall(self, key):
+        del self[key]
 
-    def is_exist(self, x):
-        return x in self.d and self.d[x] != 0
+    def discard(self, key, val=1):
+        if key in self:
+            if self[key] > val:
+                self[key] -= val
+            else:
+                del self[key]
 
-    def count(self, x):
-        if x not in self.d:
-            return 0
-        return self.d[x]
+    def count(self, key):
+        return self.get(key, 0)
