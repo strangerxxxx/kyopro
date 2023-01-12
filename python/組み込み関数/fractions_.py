@@ -123,7 +123,7 @@ class Fraction:
 
     def inverse(self):
         if self.a == 0:
-            raise ZeroDivisionError(f"try to calcuate inverse of {self.a}/{self.b}")
+            raise ZeroDivisionError(f"tring to calcuate inverse of {self.a}/{self.b}")
         return Fraction(self.b, self.a)
 
     def __pos__(self):
