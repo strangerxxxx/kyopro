@@ -57,6 +57,9 @@ class Modint(int):
         self = self.__mul__(self.modinv(other))
         return self
 
+    def __neg__(self):
+        return (self.mod - self) % self.mod
+
     __itruediv__ = __ifloordiv__
 
     def __ipow__(self, other):
