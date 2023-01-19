@@ -1,6 +1,7 @@
 def scipycomb(n, r):
     # modなし組み合わせ
     from scipy.special import comb
+
     return comb(n, r, exact=True)
     # import math
     # print(math.perm(n, r))
@@ -8,12 +9,14 @@ def scipycomb(n, r):
 
 def cmb(n: int, r: int, m=998244353):
     # modあり組み合わせ
-    if (r > n - r):
+    if r < 0 or n < r:
+        return 0
+    if r > n - r:
         return cmb(n, n - r, m)
     c = d = 1
     for i in range(r):
-        c *= (n - i)
-        d *= (r - i)
+        c *= n - i
+        d *= r - i
         c %= m
         d %= m
     return c * pow(d, m - 2, m) % m
@@ -23,9 +26,11 @@ def perm(n: int, r: int = None, m: int = 998244353) -> int:
     # modあり順列 n==rで階乗
     if r is None:
         r = n
+    if r < 0 or n < r:
+        return 0
     c = 1
     for i in range(r):
-        c *= (n - i)
+        c *= n - i
         c %= m
     return c
 
@@ -33,15 +38,18 @@ def perm(n: int, r: int = None, m: int = 998244353) -> int:
 def hom(n: int, r: int, m=998244353):
     # modあり重複組み合わせ nHr=n+r-1Cr, n:separator+1
     def cmb(n: int, r: int, m=998244353):
-        if (r > n - r):
+        if r < 0 or n < r:
+            return 0
+        if r > n - r:
             return cmb(n, n - r, m)
         c = d = 1
         for i in range(r):
-            c *= (n - i)
-            d *= (r - i)
+            c *= n - i
+            d *= r - i
             c %= m
             d %= m
         return c * pow(d, m - 2, m) % m
+
     return cmb(n + r - 1, r, m)
 
 
@@ -49,7 +57,7 @@ def factorial(n: int, m: int = 998244353) -> int:
     # modあり階乗
     c = 1
     for i in range(n):
-        c *= (n - i)
+        c *= n - i
         c %= m
     return c
 
@@ -71,6 +79,7 @@ class MemorizeCombination:
 
     def __init__(self):
         import sys
+
         sys.setrecursionlimit = 998244353
         self.cmb = {}
 
@@ -83,8 +92,7 @@ class MemorizeCombination:
             return 1
         if (n, r) in self.cmb:
             return self.cmb[(n, r)]
-        self.cmb[(n, r)] = self.__call__(
-            n - 1, r - 1) + self.__call__(n - 1, r)
+        self.cmb[(n, r)] = self.__call__(n - 1, r - 1) + self.__call__(n - 1, r)
         return self.cmb[(n, r)]
 
     def init_calc(self, n, r):
@@ -109,16 +117,14 @@ class Combination:
             return 0
         if r > self.n_max:
             raise ValueError("n is larger than n_max.")
-        return self.fac[n] * self.facinv[r] % self.mod * \
-            self.facinv[n - r] % self.mod
+        return self.fac[n] * self.facinv[r] % self.mod * self.facinv[n - r] % self.mod
 
     def make_modinv_list(self, n):
         # 0からnまでのmod逆元のリスト
         modinv = [0] * (n + 1)
         modinv[1] = 1
         for i in range(2, n + 1):
-            modinv[i] = self.mod - self.mod // i * \
-                modinv[self.mod % i] % self.mod
+            modinv[i] = self.mod - self.mod // i * modinv[self.mod % i] % self.mod
         return modinv
 
     def make_factorial_list(self, n):
@@ -156,8 +162,7 @@ class Permutation:
         modinv = [0] * (n + 1)
         modinv[1] = 1
         for i in range(2, n + 1):
-            modinv[i] = self.mod - self.mod // i * \
-                modinv[self.mod % i] % self.mod
+            modinv[i] = self.mod - self.mod // i * modinv[self.mod % i] % self.mod
         return modinv
 
     def make_factorial_list(self, n):
@@ -191,8 +196,7 @@ class Combinatorics:
             return 0
         if r > self.n_max:
             raise ValueError("n is larger than n_max.")
-        return self.fac[n] * self.facinv[r] % self.mod * \
-            self.facinv[n - r] % self.mod
+        return self.fac[n] * self.facinv[r] % self.mod * self.facinv[n - r] % self.mod
 
     def permutation(self, n, r=None):
         """
@@ -222,8 +226,7 @@ class Combinatorics:
         modinv = [0] * (n + 1)
         modinv[1] = 1
         for i in range(2, n + 1):
-            modinv[i] = self.mod - self.mod // i * \
-                modinv[self.mod % i] % self.mod
+            modinv[i] = self.mod - self.mod // i * modinv[self.mod % i] % self.mod
         return modinv
 
     def make_factorial_list(self, n):
@@ -249,11 +252,11 @@ class BinomialCoefficient:
         for p, pe in self.factorization:
             fac = [1] * pe
             for i in range(1, pe):
-                fac[i] = fac[i-1] * (i if i % p else 1) % pe
+                fac[i] = fac[i - 1] * (i if i % p else 1) % pe
             inv = [1] * pe
             inv[-1] = fac[-1]
             for i in range(1, pe)[::-1]:
-                inv[i-1] = inv[i] * (i if i % p else 1) % pe
+                inv[i - 1] = inv[i] * (i if i % p else 1) % pe
             self.facs.append(fac)
             self.invs.append(inv)
             # coeffs
@@ -272,9 +275,10 @@ class BinomialCoefficient:
             return 1 % self.MOD
         res = 0
         for i, (p, pe) in enumerate(self.factorization):
-            res += self._choose_pe(n, k, p, pe,
-                                   self.facs[i], self.invs[i], self.pows[i]
-                                   ) * self.coeffs[i]
+            res += (
+                self._choose_pe(n, k, p, pe, self.facs[i], self.invs[i], self.pows[i])
+                * self.coeffs[i]
+            )
             res %= self.MOD
         return res
 
@@ -288,15 +292,15 @@ class BinomialCoefficient:
         return res
 
     def _choose_pe(self, n, k, p, pe, fac, inv, powp):
-        r = n-k
+        r = n - k
         e0 = self._E(n, k, r, p)
         if e0 >= len(powp):
             return 0
         res = powp[e0]
-        if (p != 2 or pe == 4) and self._E(n // (pe // p),
-                                           k // (pe // p),
-                                           r // (pe // p), p) % 2:
-            res = pe-res
+        if (p != 2 or pe == 4) and self._E(
+            n // (pe // p), k // (pe // p), r // (pe // p), p
+        ) % 2:
+            res = pe - res
         while n:
             res = res * fac[n % pe] % pe * inv[k % pe] % pe * inv[r % pe] % pe
             n //= p
@@ -306,8 +310,8 @@ class BinomialCoefficient:
 
     def _factorize(self, N):
         factorization = []
-        for i in range(2, N+1):
-            if i*i > N:
+        for i in range(2, N + 1):
+            if i * i > N:
                 break
             if N % i:
                 continue
@@ -315,7 +319,7 @@ class BinomialCoefficient:
             while N % i == 0:
                 N //= i
                 c += 1
-            factorization.append((i, i ** c))
+            factorization.append((i, i**c))
         if N != 1:
             factorization.append((N, N))
         return factorization
