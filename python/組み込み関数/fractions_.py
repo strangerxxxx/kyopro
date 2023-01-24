@@ -167,3 +167,11 @@ class Fraction:
 
     def __hash__(self) -> int:
         return hash(self.__str__())
+
+
+import fractions
+
+
+class frac(fractions.Fraction):
+    def __hash__(self) -> int:
+        return hash(super().__str__())
