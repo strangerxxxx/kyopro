@@ -3,6 +3,15 @@ def modinv(a: int, p: int = 1, m: int = 998244353) -> int:
     return pow(a, m - 1 - p, m)
 
 
+def make_modinv_list(n, mod=998244353):
+    # 0からnまでのmod逆元のリスト
+    modinv = [0] * (n + 1)
+    modinv[1] = 1
+    for i in range(2, n + 1):
+        modinv[i] = mod - mod // i * modinv[mod % i] % mod
+    return modinv
+
+
 def extgcd(a: int, b: int) -> int:
     # 拡張ユークリッド互除法 ax + by = gcd(a,b) の最小整数解
     # return gcd(a,b),a,b
@@ -14,7 +23,7 @@ def extgcd(a: int, b: int) -> int:
         return a, 1, 0
 
 
-def inv(a, m):
+def inv(a, m=998244353):
     # aのmod m逆元 : mは非素数でも可
     d, res, _ = extgcd(a, m)
     if d != 1:
@@ -22,7 +31,16 @@ def inv(a, m):
     return res
 
 
-def inv_calc(a, b, m):
+def inv2(a, m=998244353):
+    # aのmod m逆元 : mは非素数でも可
+    x, y = 1, 0
+    while m != 0:
+        x, y = y, x - (a // m) * y
+        a, m = m, a % m
+    return x
+
+
+def inv_calc(a, b, m=998244353):
     # ax == b mod mとなる最小のx : mは非素数でも可
     import math
     import functools
