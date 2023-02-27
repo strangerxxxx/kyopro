@@ -13,6 +13,7 @@ def two_point_linear2(p, q):
     c = p[1] * q[0] - p[0] * q[1]
     import math
     import functools
+
     g = functools.reduce(math.gcd, (a, b, c))
     if a < 0 or (a == 0 and b < 0):
         g *= -1
@@ -26,6 +27,7 @@ def vertical_bisector(p, q):
     c = p[0] ** 2 - q[0] ** 2 + p[1] ** 2 - q[1] ** 2
     import math
     import functools
+
     g = functools.reduce(math.gcd, (a, b, c))
     if a < 0 or (a == 0 and b < 0):
         g *= -1
@@ -34,4 +36,23 @@ def vertical_bisector(p, q):
 
 def point_line_distance(p, q, a, b, c):
     # 点(p,q)と直線ax+by+c=0の距離
-    return abs(a * p + q * b + c) / (a ** 2 + b ** 2) ** 0.5
+    return abs(a * p + q * b + c) / (a**2 + b**2) ** 0.5
+
+
+def calc_cross_point(pointA, pointB, pointC, pointD):
+    # 四角形の対角線の交点
+    denominator = (pointC[0] - pointA[0]) * (pointD[1] - pointB[1]) - (
+        pointC[1] - pointA[1]
+    ) * (pointD[0] - pointB[0])
+
+    # 直線が平行な場合
+    if not denominator:
+        return None
+
+    vectorAC = ((pointB[0] - pointA[0]), (pointB[1] - pointA[1]))
+    r = (
+        (pointD[1] - pointB[1]) * vectorAC[0] - (pointD[0] - pointB[0]) * vectorAC[1]
+    ) / denominator
+
+    distance = ((pointC[0] - pointA[0]) * r, (pointC[1] - pointA[1]) * r)
+    return pointA[0] + distance[0], pointA[1] + distance[1]
