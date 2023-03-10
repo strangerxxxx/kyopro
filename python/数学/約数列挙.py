@@ -1,7 +1,6 @@
 def make_divisors(n: int):
     lower_divisors, upper_divisors = [], []
-    i = 1
-    for i in range(1, int(n ** 0.5) + 1):
+    for i in range(1, int(n**0.5) + 1):
         if n % i == 0:
             lower_divisors.append(i)
             if i != n // i:
@@ -10,7 +9,7 @@ def make_divisors(n: int):
 
 
 def divisors_gen(n: int):
-    for i in range(1, int(n ** 0.5) + 1):
+    for i in range(1, int(n**0.5) + 1):
         if n % i == 0:
             yield i
             if i != n // i:
@@ -20,7 +19,7 @@ def divisors_gen(n: int):
 def sum_of_divisors(n: int) -> int:
     # 約数の総和
     sumd = 0
-    for i in range(1, int(n ** 0.5)):
+    for i in range(1, int(n**0.5)):
         if n % i == 0:
             sumd += i
             sumd += n // i
@@ -35,7 +34,7 @@ def sum_of_divisors(n: int) -> int:
 def pi_of_divisors(n: int) -> int:
     # 約数の総積
     pid = 1
-    for i in range(1, int(n ** 0.5)):
+    for i in range(1, int(n**0.5)):
         if n % i == 0:
             pid *= i
             pid *= n // i
