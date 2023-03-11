@@ -1,9 +1,6 @@
 def distance(a, b) -> float:
     # 2点間のユークリッド距離
-    d = 0
-    for i, j in zip(a, b):
-        d += (i - j) ** 2
-    return d ** 0.5
+    return sum((i - j) ** 2 for i, j in zip(a, b)) ** 0.5
 
 
 def euclidean_scipy(a, b) -> float:
@@ -14,10 +11,7 @@ def euclidean_scipy(a, b) -> float:
 
 def manhattan_distance(a, b) -> int:
     # 2点間のマンハッタン距離
-    d = 0
-    for i, j in zip(a, b):
-        d += abs(i - j)
-    return d
+    return sum(abs(i - j) for i, j in zip(a, b))
 
 
 def manhattan_scipy(a, b) -> int:
