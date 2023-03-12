@@ -25,7 +25,7 @@ def geometric_progression_sum_mod(a: int, r: int, n: int, mod: int = 998244353) 
     # 等比数列の和、初項a、公比r、項数n
     if r == 1:
         return a * n % mod
-    return a * (pow(r, n, mod) - 1) % mod * pow(r - 1, mod - 2, mod) % mod
+    return a * (pow(r, n, mod * (r - 1)) - 1) // (r - 1) % mod
 
 
 def geometric_progression_sum_mod_2(
