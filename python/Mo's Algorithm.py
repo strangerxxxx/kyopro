@@ -33,14 +33,14 @@ def mos_algorithm():
             while y <= r:
                 add(c[y])
                 y += 1
+            while x > l:
+                x -= 1
+                add(c[x])
             while y > r + 1:
                 y -= 1
                 rem(c[y])
             while x < l:
                 rem(c[x])
                 x += 1
-            while x > l:
-                x -= 1
-                add(c[x])
             ans[i] = nowans
     print(*ans, sep="\n")
