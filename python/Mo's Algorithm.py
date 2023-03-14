@@ -17,7 +17,8 @@ def mos_algorithm():
     input = sys.stdin.readline
     n, q = map(int, input().split())
     c = tuple(map(int, input().split()))
-    block_range = int(3**0.5 * n / (q << 1) ** 0.5) + 1
+    block_range = int(n / q**0.5) + 1
+    # block_range = int(3**0.5 * n / (q << 1) ** 0.5) + 1
     qs = [[] for _ in range(n // block_range + 1)]
     for i in range(q):
         l, r = map(lambda x: int(x) - 1, input().split())
