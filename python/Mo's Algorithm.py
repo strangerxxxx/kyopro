@@ -1,27 +1,29 @@
-def resolve():
+def mos_algorithm():
     # https://atcoder.jp/contests/abc174/tasks/abc174_f
     def add(i):
-        nonlocal diffs
+        nonlocal nowans
         d[i] += 1
         if d[i] == 1:
-            diffs += 1
+            nowans += 1
 
     def rem(i):
-        nonlocal diffs
+        nonlocal nowans
         d[i] -= 1
         if d[i] == 0:
-            diffs -= 1
+            nowans -= 1
+
     import sys
+
     input = sys.stdin.readline
     n, q = map(int, input().split())
     c = tuple(map(int, input().split()))
-    block_range = int(n / q ** 0.5) + 1
+    block_range = int(3**0.5 * n / (q << 1) ** 0.5) + 1
     qs = [[] for _ in range(n // block_range + 1)]
     for i in range(q):
-        x, y = map(lambda x: int(x) - 1, input().split())
-        qs[x // block_range].append((y, x, i))
-    ans = [None] * q
-    diffs = 0
+        l, r = map(lambda x: int(x) - 1, input().split())
+        qs[l // block_range].append((r, l, i))
+    ans = [0] * q
+    nowans = 0
     d = [0] * (n + 1)
     x = 0
     y = 0
@@ -31,17 +33,13 @@ def resolve():
                 add(c[y])
                 y += 1
             while y > r + 1:
-                rem(c[y - 1])
                 y -= 1
+                rem(c[y])
             while x < l:
                 rem(c[x])
                 x += 1
             while x > l:
-                add(c[x - 1])
                 x -= 1
-            ans[i] = diffs
+                add(c[x])
+            ans[i] = nowans
     print(*ans, sep="\n")
-
-
-if __name__ == '__main__':
-    resolve()
