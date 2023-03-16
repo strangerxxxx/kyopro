@@ -42,6 +42,11 @@ const int d[5] = {0, 1, 0, -1, 0};
 #define REPIJ(i, j, n)             \
   for (ll i = 0; i < (ll)(n); i++) \
     for (ll j = i + 1; j < (ll)(n); j++)
+#define REPIN(a)     \
+  for (auto &&i : a) \
+  {                  \
+    cin >> i;        \
+  }
 #define LEN(x) x.size()
 typedef pair<ll, ll> PII;
 typedef vector<ll> VI;
@@ -135,7 +140,7 @@ void print(const T &first, const A &...rest)
 }
 template <class... A>
 void print(const A &...rest) { print(rest...); }
-#define PRINTD(d) printf("%.16lf\n", (double)d)
+#define PRINTD(d) cout << fixed << setprecision(15) << d << "\n"
 void PRINTVI(VI V)
 {
   if (V.size())
