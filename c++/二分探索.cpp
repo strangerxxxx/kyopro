@@ -24,3 +24,27 @@ int main()
   }
   print(ok);
 }
+int main_double()
+{
+  double ok = 0;
+  double ng = 1E18;
+  double mid;
+  const double eps = 1E-12;
+  auto check = [&](double mid) -> bool
+  {
+    return true;
+  };
+  while (abs(ok - ng) > eps)
+  {
+    mid = (ok + ng) / 2;
+    if (check(mid))
+    {
+      ok = mid;
+    }
+    else
+    {
+      ng = mid;
+    }
+  }
+  cout << fixed << setprecision(15) << ok << "\n";
+}
