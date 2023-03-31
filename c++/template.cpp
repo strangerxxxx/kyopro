@@ -3,9 +3,9 @@
 #define _GLIBCXX_DEBUG
 #endif
 /*Pythonで提出してない？*/
-#pragma GCC target("avx2")
-#pragma GCC optimize("O3")
-#pragma GCC optimize("unroll-loops")
+// #pragma GCC target("avx2")
+// #pragma GCC optimize("O3")
+// #pragma GCC optimize("unroll-loops")
 // #pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,tune=native")
 #include <bits/stdc++.h>
 using namespace std;
@@ -14,7 +14,7 @@ using namespace atcoder;
 using mint = modint998244353;
 // using mint = modint1000000007;
 // #include <boost/multiprecision/cpp_int.hpp>
-// using boost::multiprecision::cpp_int;
+// using namespace boost::multiprecision;
 typedef long long ll;
 const ll MOD = 998244353;
 typedef unsigned int uint;
@@ -31,7 +31,6 @@ const double EPS = 1e-10;
 const double PI = 3.141592653589793238;
 const int dx[4] = {1, 0, -1, 0};
 const int dy[4] = {0, 1, 0, -1};
-const int d[5] = {0, 1, 0, -1, 0};
 #define REP(i, n) for (ll i = 0; i < (ll)(n); i++)
 #define REP3(i, m, n) for (ll i = (m); i < (ll)(n); i++)
 #define REP4(i, m, n, d) for (ll i = (m); i < (ll)(n); i = i + (ll)(d))
