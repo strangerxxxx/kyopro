@@ -1,55 +1,147 @@
-class LiChaoTree(object):
-    def __init__(self, X: int):
-        # X:管理する点の集合
-        X = sorted(set(X))
-        N = 1 << (len(X) - 1).bit_length()
-        self.INF = float("inf")
-        self._tree = [None] * (N << 1)
-        self._N, self._X = N, X + [self.INF] * (N - len(X))
-        self._X_inv = {x: i for i, x in enumerate(X)}
+from bisect import bisect_left
 
-    def _add_line(self, a: int, b: int, l: int, r: int) -> None:
-        # [l,r)の範囲でy=ax+bを追加
-        tree, X = self._tree, self._X
-        i = 1
-        while r - l:
-            if tree[i] is None:
-                tree[i] = (a, b)
-                return
-            m = (l + r) >> 1
-            xl, xm, xr = X[l], X[m], X[r - 1]
-            ai, bi = tree[i]
-            left = a * xl + b < ai * xl + bi
-            mid = a * xm + b < ai * xm + bi
-            right = a * xr + b < ai * xr + bi
 
-            if left is right:
-                if left:
-                    tree[i] = (a, b)
+class LiChaoTree:
+    def __init__(self, xs, INF=10**20):
+        self.INF = INF
+        xs = sorted(set(xs))
+        n = len(xs)
+        self.size = 1 << (n - 1).bit_length()
+        self.comp_xs = {x: i for i, x in enumerate(xs)}
+        self.xs = xs + [self.INF] * (self.size - n)
+        self.data = [None] * (self.size + self.size)
+
+    def update(self, line, k, l, r):
+        while True:
+            if self.data[k] is None:
+                self.data[k] = line
                 return
-            if mid:
-                tree[i], a, b = (a, b), ai, bi
-            if left is not mid:
-                i, r = i << 1, m
+
+            mid = (l + r) >> 1
+            lx = self.xs[l]
+            mx = self.xs[mid]
+            rx = self.xs[r - 1]
+            lu = self.f(line, lx) < self.f(self.data[k], lx)
+            mu = self.f(line, mx) < self.f(self.data[k], mx)
+            ru = self.f(line, rx) < self.f(self.data[k], rx)
+
+            if lu and ru:
+                self.data[k] = line
+                return
+            if not lu and not ru:
+                return
+            if mu:
+                self.data[k], line = line, self.data[k]
+            if lu != mu:
+                r, k = mid, k << 1
             else:
-                i, l = i << 1 | 1, m
+                l, k = mid, k << 1 | 1
 
-    def add_line(self, a: int, b: int) -> None:
-        # y=ax+bを追加
-        return self._add_line(a, b, 0, self._N)
+    def add_line(self, line):
+        # 直線line(a,b):y=ax+bを追加
+        self.update(line, 1, 0, self.size)
 
-    def get_min(self, x: int) -> int:
-        # xでの最小値
-        i = self._X_inv[x]
-        i += self._N
+    def add_seg(self, line, l, r):
+        # 線分line(a,b):y=ax+b、[l,r)を追加
+        l = bisect_left(self.xs, l)
+        r = bisect_left(self.xs, r)
+        l0, r0 = l + self.size, r + self.size
+        size = 1
+        while l0 < r0:
+            if l0 & 1:
+                self.update(line, l0, l, l + size)
+                l0 += 1
+                l += size
+            if r0 & 1:
+                r0 -= 1
+                r -= size
+                self.update(line, r0, r, r + size)
+            l0 >>= 1
+            r0 >>= 1
+            size <<= 1
+
+    def f(self, line, x):
+        a, b = line
+        return a * x + b
+
+    def get_min(self, x):
+        k = self.comp_xs[x] + self.size
         res = self.INF
-        tree = self._tree
-        while i:
-            if tree[i] is not None:
-                a, b = tree[i]
-                res = min(res, a * x + b)
-            i >>= 1
+        while k > 0:
+            if self.data[k] is not None:
+                res = min(res, self.f(self.data[k], x))
+            k >>= 1
         return res
 
-    def val(a: int, b: int, x: int) -> int:
+
+class LiChaoTree_max:
+    def __init__(self, xs, INF=10**20):
+        self.INF = INF
+        xs = sorted(list(set(xs)))
+        n = len(xs)
+        self.size = 1 << (n - 1).bit_length()
+        self.comp_xs = {x: ind for ind, x in enumerate(xs)}
+        self.xs = xs + [self.INF] * (self.size - n)
+        self.data = [None] * (self.size + self.size)
+
+    def update(self, line, k, l, r):
+        while True:
+            if self.data[k] is None:
+                self.data[k] = line
+                return
+
+            mid = (l + r) >> 1
+            lx = self.xs[l]
+            mx = self.xs[mid]
+            rx = self.xs[r - 1]
+            lu = self.f(line, lx) > self.f(self.data[k], lx)
+            mu = self.f(line, mx) > self.f(self.data[k], mx)
+            ru = self.f(line, rx) > self.f(self.data[k], rx)
+
+            if lu and ru:
+                self.data[k] = line
+                return
+            if not lu and not ru:
+                return
+            if mu:
+                self.data[k], line = line, self.data[k]
+            if lu != mu:
+                r, k = mid, k << 1
+            else:
+                l, k = mid, k << 1 | 1
+
+    def add_line(self, line):
+        # 直線line(a,b):y=ax+bを追加
+        self.update(line, 1, 0, self.size)
+
+    def add_seg(self, line, l, r):
+        # 線分line(a,b):y=ax+b、[l,r)を追加
+        l = bisect_left(self.xs, l)
+        r = bisect_left(self.xs, r)
+        l0, r0 = l + self.size, r + self.size
+        size = 1
+        while l0 < r0:
+            if l0 & 1:
+                self.update(line, l0, l, l + size)
+                l0 += 1
+                l += size
+            if r0 & 1:
+                r0 -= 1
+                r -= size
+                self.update(line, r0, r, r + size)
+            l0 >>= 1
+            r0 >>= 1
+            size <<= 1
+
+    def f(self, line, x):
+        a, b = line
         return a * x + b
+
+    def get_max(self, x):
+        k = self.comp_xs[x] + self.size
+        res = -self.INF
+        while k > 0:
+            if self.data[k] is not None:
+                res = max(res, self.f(self.data[k], x))
+            k >>= 1
+        return res
