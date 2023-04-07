@@ -1,11 +1,9 @@
 def has_intersect(a, b):
     # 正方形が重なっているか判定
-    p, q, r, s = (
-        max(a[0][0], b[0][0]),
-        min(a[1][0], b[1][0]),
-        max(a[0][1], b[0][1]),
-        min(a[1][1], b[1][1]),
-    )
+    p = max(a[0][0], b[0][0])
+    q = min(a[1][0], b[1][0])
+    r = max(a[0][1], b[0][1])
+    s = min(a[1][1], b[1][1])
     return (p < q and r <= s) or (p <= q and r < s)
 
 
@@ -47,12 +45,6 @@ def on_line_segment(p, a, b):
     return (b[0] - a[0]) * (p[1] - a[1]) == (b[1] - a[1]) * (p[0] - a[0]) and (
         b[0] - a[0]
     ) ** 2 + (b[1] - a[1]) ** 2 <= (p[0] - a[0]) ** 2 + (p[1] - a[1]) ** 2
-
-
-def line_side(p, a, b):
-    # 直線ABに対して点Pが直線上(=0)、左(=1),右(=-1)か判定
-    x = (b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0])
-    return (x > 0) - (x < 0)
 
 
 def intersect(p1, p2, p3, p4, both_ends=True):
