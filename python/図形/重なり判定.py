@@ -1,5 +1,5 @@
 def has_intersect(a, b):
-    # 図形が重なっているか判定
+    # 正方形が重なっているか判定
     p, q, r, s = (
         max(a[0][0], b[0][0]),
         min(a[1][0], b[1][0]),
@@ -9,14 +9,14 @@ def has_intersect(a, b):
     return (p < q and r <= s) or (p <= q and r < s)
 
 
-def inside_polygon(p0, qs):
-    # 点が図形の内部であるか判定
+def inside_polygon(p, ps):
+    # 点Pが凸包の内部であるか判定
     cnt = 0
-    L = len(qs)
-    x, y = p0
+    L = len(ps)
+    x, y = p
     for i in range(L):
-        x0, y0 = qs[i - 1]
-        x1, y1 = qs[i]
+        x0, y0 = ps[i - 1]
+        x1, y1 = ps[i]
         x0 -= x
         y0 -= y
         x1 -= x
@@ -35,6 +35,24 @@ def inside_polygon(p0, qs):
         if y0 <= 0 < y1 and x0 * (y1 - y0) > y0 * (x1 - x0):
             cnt ^= 1
     return bool(cnt)
+
+
+def on_line(p, a, b):
+    # 点Pが直線AB上か判定
+    return (b[0] - a[0]) * (p[1] - a[1]) == (b[1] - a[1]) * (p[0] - a[0])
+
+
+def on_line_segment(p, a, b):
+    # 点Pが線分AB上か判定
+    return (b[0] - a[0]) * (p[1] - a[1]) == (b[1] - a[1]) * (p[0] - a[0]) and (
+        b[0] - a[0]
+    ) ** 2 + (b[1] - a[1]) ** 2 <= (p[0] - a[0]) ** 2 + (p[1] - a[1]) ** 2
+
+
+def line_side(p, a, b):
+    # 直線ABに対して点Pが直線上(=0)、左(=1),右(=-1)か判定
+    x = (b[0] - a[0]) * (p[1] - a[1]) - (b[1] - a[1]) * (p[0] - a[0])
+    return (x > 0) - (x < 0)
 
 
 def intersect(p1, p2, p3, p4, both_ends=True):
