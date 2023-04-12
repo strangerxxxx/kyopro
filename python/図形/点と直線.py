@@ -1,8 +1,8 @@
 def two_point_linear(p, q):
     # 点p,点qを通る直線y=ax+b
-    if p[1] == q[1]:
-        return 0, p[1]
-    a = (q[0] - p[0]) / (q[1] - p[1])
+    if p[0] == q[0]:
+        return 0, p[0]
+    a = (q[1] - p[1]) / (q[0] - p[0])
     return a, p[1] - p[0] * a
 
 
@@ -39,20 +39,16 @@ def point_line_distance(p, q, a, b, c):
     return abs(a * p + q * b + c) / (a**2 + b**2) ** 0.5
 
 
-def calc_cross_point(pointA, pointB, pointC, pointD):
+def calc_cross_point(a, b, c, d):
     # 四角形の対角線の交点
-    denominator = (pointC[0] - pointA[0]) * (pointD[1] - pointB[1]) - (
-        pointC[1] - pointA[1]
-    ) * (pointD[0] - pointB[0])
+    denom = (c[0] - a[0]) * (d[1] - b[1]) - (c[1] - a[1]) * (d[0] - b[0])
 
     # 直線が平行な場合
-    if not denominator:
+    if not denom:
         return None
 
-    vectorAC = ((pointB[0] - pointA[0]), (pointB[1] - pointA[1]))
-    r = (
-        (pointD[1] - pointB[1]) * vectorAC[0] - (pointD[0] - pointB[0]) * vectorAC[1]
-    ) / denominator
+    ac = (b[0] - a[0], b[1] - a[1])
+    r = ((d[1] - b[1]) * ac[0] - (d[0] - b[0]) * ac[1]) / denom
 
-    distance = ((pointC[0] - pointA[0]) * r, (pointC[1] - pointA[1]) * r)
-    return pointA[0] + distance[0], pointA[1] + distance[1]
+    distance = ((c[0] - a[0]) * r, (c[1] - a[1]) * r)
+    return a[0] + distance[0], a[1] + distance[1]
