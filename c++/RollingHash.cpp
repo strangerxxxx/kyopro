@@ -1,6 +1,3 @@
-#ifdef STRANGERXXX
-#define _GLIBCXX_DEBUG
-#endif
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
