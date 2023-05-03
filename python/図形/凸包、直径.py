@@ -1,4 +1,4 @@
-def convex_hull(ps, psIsSorted=False):
+def convex_hull(ps: list, psIsSorted=False):
     def cross3(a, b, c):
         return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
 
