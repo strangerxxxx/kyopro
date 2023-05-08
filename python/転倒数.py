@@ -1,4 +1,5 @@
 def inversion_num(l, maxl=None):
+    # assert all(x >= 0 for x in l)
     bit = BIT(max(l) + 1) if maxl is None else BIT(maxl)
     res = 0
     for i, p in enumerate(l):
