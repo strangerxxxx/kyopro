@@ -26,23 +26,13 @@ class UnionFind:
         self.groups -= 1
         return True
 
-    def union_right(self, x: int, y: int) -> bool:
-        x = self.find(x)
-        y = self.find(y)
-        if x == y:
+    def union_left(self, parent: int, child: int) -> bool:
+        parent = self.find(parent)
+        child = self.find(child)
+        if parent == child:
             return False
-        self.parent[x] += self.parent[y]
-        self.parent[y] = x
-        self.groups -= 1
-        return True
-
-    def union_left(self, x: int, y: int) -> bool:
-        x = self.find(x)
-        y = self.find(y)
-        if x == y:
-            return False
-        self.parent[x] += self.parent[y]
-        self.parent[y] = x
+        self.parent[parent] += self.parent[child]
+        self.parent[child] = parent
         self.groups -= 1
         return True
 
