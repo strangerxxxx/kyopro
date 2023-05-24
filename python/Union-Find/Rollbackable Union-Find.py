@@ -108,7 +108,8 @@ class UnionFind_Rollbackable2:
         x = self.find(x)
         y = self.find(y)
         if x == y:
-            self.history.append(tuple())
+            self.history.append((-1, -1))
+            self.history.append((-1, -1))
             return False
         if self.parent[x] > self.parent[y]:
             x, y = y, x
@@ -160,13 +161,14 @@ class UnionFind_Rollbackable2:
     __repr__ = __str__
 
     def undo(self) -> bool:
-        if self.history[-1]:
+        if self.history[-1][0] >= 0:
             for _ in range(2):
                 i, j = self.history.pop()
                 self.parent[i] = j
             self.groups += 1
             return True
         else:
+            self.history.pop()
             self.history.pop()
             return False
 
