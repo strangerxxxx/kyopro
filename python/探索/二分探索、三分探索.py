@@ -1,12 +1,13 @@
 def binary_search():
     # 二分探索(答えが整数)
-    def f(mid) -> bool:
+    def check(mid) -> bool:
         # 実装
         return True
-    ok, ng = 0, 10 ** 20
+
+    ok, ng = 0, 10**20
     while abs(ok - ng) > 1:
-        mid = (ok + ng) // 2
-        if f(mid):
+        mid = (ok + ng) >> 1
+        if check(mid):
             ok = mid
         else:
             ng = mid
@@ -15,19 +16,22 @@ def binary_search():
 
 def float_binary_search():
     # 二分探索(答えがfloat)
-    def f(mid) -> bool:
+    def check(mid) -> bool:
         # 実装
         return True
-    delta = 10 ** -13
-    ok, ng = 0, 10 ** 10
-    while abs(ok - ng) > delta:
+
+    delta = 10**-13
+    ok, ng = 0, 10**10
+    count = 0
+    while abs(ok - ng) > delta and count < 1000:
         # mid = (ok * ng) ** 0.5  # 相対誤差
         mid = (ok + ng) / 2
-        if f(mid):
+        if check(mid):
             ok = mid
         else:
             ng = mid
-    print(ok)
+        count += 1
+    print(f"{ok:.15f}")
 
 
 def bisection_method_scipy():
@@ -37,18 +41,21 @@ def bisection_method_scipy():
 
     def f(x):
         return x  # 関数
+
     p, q = map(int, input().split())
-    print(bisect(f, 1, 10 ** 15))  # 関数, 下限, 上限
+    print(bisect(f, 1, 10**15))  # 関数, 下限, 上限
 
 
 def ternary_search():
     # 三分探索
     def f(x) -> float:
         return x + p / 2 ** (x / 1.5)
+
     p = float(input())
     left, right = 0, 100
-    delta = 10 ** -13
-    while right - left > delta:
+    delta = 10**-13
+    count = 0
+    while right - left > delta and count < 1000:
         midl = (left * 2 + right) / 3
         midr = (left + right * 2) / 3
         if f(midl) < f(midr):  # 上に凸なら逆
@@ -64,8 +71,9 @@ def golden_section_search():
     def f(mid) -> float:
         # 実装
         return mid
-    delta = 10 ** -13
-    gamma = (-1 + 5 ** 0.5) / 2
+
+    delta = 10**-13
+    gamma = (-1 + 5**0.5) / 2
     left, right = 0, 100
     diff = right - left
     midl = left + diff * (1 - gamma)
@@ -83,6 +91,13 @@ def golden_section_search():
 
 
 def fibonacci_search():
+    memo = {}
+
+    def f(x):
+        if x not in memo:
+            memo[x] = x
+        return memo[x]
+
     def fibl(n):
         l = [1]
         i = j = 1
@@ -92,26 +107,15 @@ def fibonacci_search():
             j = l[-1]
         return l
 
-    def f(mid) -> int:
-        if memo[mid] is None:
-            # 実装
-            memo[mid] = mid
-        return memo[mid]
-    n = int(input())
-    fib = fibl(n)
+    left, right = 0, 10**18
+    fib = fibl(right - left)
     length = fib.pop()
-    memo = [None] * n
-    lmergin = (length - n) // 2
-    memo = [-lmergin + x for x in range(lmergin)] + \
-        memo + [-i - 1 for i in range(length - n - lmergin)
-                ]  # 左右にfiller、適宜値を大きくする
-    left, right = 0, length
     if fib:
         i = fib.pop()
         midl = length - i
         midr = left + i
     for i in reversed(fib):
-        if f(midl) > f(midr):
+        if f(midl) < f(midr):
             right = midr
             midr = midl
             midl = right - i
@@ -119,6 +123,4 @@ def fibonacci_search():
             left = midl
             midl = midr
             midr = left + i
-    f(left)
-    ans = max(x for x in memo if not x is None)
-    print(ans)
+    print(min(f(left), f(midl), f(midr), f(right)))
