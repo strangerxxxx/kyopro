@@ -38,6 +38,7 @@ const int dy[4] = {0, 1, 0, -1};
 #define REP3R(i, m, n) for (ll i = (ll)(n)-1; i >= (ll)(m); i--)
 #define REP4R(i, m, n, d) for (ll i = (m); i >= (ll)(n); i = i + (ll)(d))
 #define REPA(i, I) for (const auto &i : I)
+#define REPB(i, I) for (auto &&i : I)
 #define REPIJ(i, j, n)             \
   for (ll i = 0; i < (ll)(n); i++) \
     for (ll j = i + 1; j < (ll)(n); j++)
