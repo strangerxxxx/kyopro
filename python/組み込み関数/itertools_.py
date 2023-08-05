@@ -1,3 +1,14 @@
+def accumulate(a: list, start: int = None):
+    if start is None:
+        s = 0
+    else:
+        s = start
+        yield s
+    for i in a:
+        s += i
+        yield s
+
+
 def next_permutation(a: list, l: int = 0, r: int = None) -> bool:
     # a[l,r)の次の組み合わせ
     if r is None:
@@ -66,7 +77,7 @@ def powerset(a):
 
 
 def pairwise(n: int):
-    # assert a % 2 == 0
+    # assert n % 2 == 0
     q = [([], (1 << n) - 1)]
     while q:
         a, b = q.pop()
@@ -84,7 +95,53 @@ def pairwise(n: int):
             yield a
 
 
-def sum_combination(n, s):
+teams: list[list] = []
+
+
+def divide_team(n: int, i: int = 0, max_len=-1) -> list[list]:
+    # n人のチーム分けの仕方
+    if i == n:
+        yield teams
+        return
+    x = len(teams)
+    for j in range(x + 1):
+        if j == len(teams):
+            if len(teams) == max_len:
+                break
+            teams.append([i])
+            yield from divide_team(n, i + 1)
+            teams.pop()
+        else:
+            teams[j].append(i)
+            yield from divide_team(n, i + 1)
+            teams[j].pop()
+
+
+teams: list[list] = []
+
+
+def divide_m_team(n: int, m: int, i: int = 0) -> list[list]:
+    # n人のm人ずつのチーム分けの仕方
+    assert n % m == 0
+    if i == n:
+        yield teams
+        return
+    x = len(teams)
+    for j in range(x + 1):
+        if j == len(teams):
+            if len(teams) == n // m:
+                break
+            teams.append([i])
+            yield from divide_m_team(n, m, i + 1)
+            teams.pop()
+        else:
+            if len(teams[j]) < m:
+                teams[j].append(i)
+                yield from divide_m_team(n, m, i + 1)
+                teams[j].pop()
+
+
+def sum_combination(n: int, s: int):
     # 合計がsとなるn個の非負整数の組み合わせ
     if n == 1:
         yield [s]
@@ -97,6 +154,17 @@ def sum_combination(n, s):
         else:
             for j in range(s - t + 1):
                 q.append((i + [j], t + j))
+
+
+def sum_cmb(s: int):
+    # 合計がsとなる正整数の組み合わせ
+    q = [([], s, float("inf"))]
+    while q:
+        a, remain, mx = q.pop()
+        if mx >= remain:
+            yield a + [remain]
+        for i in range(1, min(mx + 1, remain)):
+            q.append((a + [i], remain - i, i))
 
 
 def number_of_permutation(a, mod: int = None):
