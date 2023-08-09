@@ -1,7 +1,7 @@
 from heapq import heapify, heappop, heappush
 
 
-class MinMaxHeap():
+class MinMaxHeap:
     def __init__(self, a=[]):
         self.max_heap = [-x for x in a]
         self.min_heap = a[:]
