@@ -72,6 +72,19 @@ def find_bothsides(a, x: int) -> tuple:
     return None, None
 
 
+def near(a, x):
+    l, r = find_bothsides(a, x)
+    if l is None:
+        if r is None:
+            return None
+        return r
+    if r is None:
+        return l
+    if x - l <= r - x:
+        return l
+    return r
+
+
 def count_lt(a, x: int) -> int:
     "Count value less than x"
     from bisect import bisect_left
