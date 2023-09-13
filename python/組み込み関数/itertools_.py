@@ -76,9 +76,16 @@ def powerset(a):
         yield [x for i, x in enumerate(a) if j >> i & 1]
 
 
-def pairwise(n: int):
-    # assert n % 2 == 0
-    q = [([], (1 << n) - 1)]
+def pairwise(n: int, out=None):
+    if n % 2:
+        if out is None:
+            for i in reversed(range(n)):
+                yield from pairwise(n, i)
+            return
+        else:
+            q = [([], (1 << n) - 1 - (1 << out))]
+    else:
+        q = [([], (1 << n) - 1)]
     while q:
         a, b = q.pop()
         if b:
@@ -165,6 +172,26 @@ def sum_cmb(s: int):
             yield a + [remain]
         for i in range(1, min(mx + 1, remain)):
             q.append((a + [i], remain - i, i))
+
+
+def brackets(a: list[str]):
+    # 括弧の付け方の全通り
+    import itertools
+
+    ops = "+-*/"
+    if len(a) == 1:
+        yield a[0]
+        return
+    for i in range(1, len(a)):
+        for b, c in itertools.product(brackets(a[:i]), brackets(a[i:])):
+            for op in ops:
+                bi = b
+                ci = c
+                # if op in "*/" and len(b) > 1:
+                #     bi = "(" + b + ")"
+                # if op in "*/" and len(c) > 1:
+                #     ci = "(" + c + ")"
+                yield bi + op + ci
 
 
 def number_of_permutation(a, mod: int = None):
