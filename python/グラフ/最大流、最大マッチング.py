@@ -144,21 +144,20 @@ class MFGraph:
 
 
 class BipartiteMatching:
-    '''
+    """
     軽量化Dinic法
     ref : https://snuke.hatenablog.com/entry/2019/05/07/013609
-    from typing import List, Tuple
-    '''
+    """
 
     def __init__(self, n: int, m: int) -> None:
         self._n = n
         self._m = m
-        self._to: List[List[int]] = [[] for _ in range(n)]
+        self._to: list[list[int]] = [[] for _ in range(n)]
 
     def add_edge(self, a: int, b: int) -> None:
         self._to[a].append(b)
 
-    def solve(self) -> List[Tuple[int, int]]:
+    def solve(self) -> list[tuple[int, int]]:
         n, m, to = self._n, self._m, self._to
         pre = [-1] * n
         root = [-1] * n
@@ -196,7 +195,38 @@ class BipartiteMatching:
         return [(v, p[v]) for v in range(n) if p[v] != -1]
 
 
-class GeneralMatching():
+class BipartiteGraph:
+    def __init__(self, n: int) -> None:
+        self.n = n
+        self.edges: list[set] = [set() for _ in range(n)]
+
+    def add_edge(self, u, v) -> None:
+        self.edges[u].add(v)
+        self.edges[v].add(u)
+
+    def construct(self):
+        """
+        2部グラフを構築する
+        return False : 2部グラフではない
+        """
+        res = [-1] * self.n
+        for start in range(self.n):
+            if res[start] != -1:
+                continue
+            res[start] = 0
+            q = [start]
+            while q:
+                i = q.pop()
+                for j in self.edges[i]:
+                    if res[j] == -1:
+                        res[j] = res[i] ^ 1
+                        q.append(j)
+                    elif res[i] == res[j]:
+                        return False
+        return res
+
+
+class GeneralMatching:
     def __init__(self, n):
         self.n = n
         self.graph = [[] for _ in range(n + 1)]
@@ -282,6 +312,7 @@ class GeneralMatching():
 
     def solve(self):
         from collections import deque
+
         for i in range(1, self.n + 1):
             self.queue = deque()
             if self.mate[i] != 0:
@@ -299,16 +330,21 @@ def scipy_maximunflow():
     from scipy.sparse import csr_matrix
     from scipy.sparse.csgraph import maximum_flow, maximum_bipartite_matching
     import numpy as np
+
     # l, r, m = map(int, input().split())
     # edges = np.array([input().split() for _ in range(m)], dtype=np.int64).T
     # graph = coo_matrix((np.ones(m, dtype=np.int64), edges),
     #                    shape=(l, r)).tocsr()
-    graph = csr_matrix([[0, 16, 13,  0,  0,  0],
-                        [0, 10,  0, 12,  0,  0],
-                        [0,  4,  0,  0, 14,  0],
-                        [0,  0,  9,  0,  0, 20],
-                        [0,  0,  0,  7,  0,  4],
-                        [0,  0,  0,  0,  0,  0]])
+    graph = csr_matrix(
+        [
+            [0, 16, 13, 0, 0, 0],
+            [0, 10, 0, 12, 0, 0],
+            [0, 4, 0, 0, 14, 0],
+            [0, 0, 9, 0, 0, 20],
+            [0, 0, 0, 7, 0, 4],
+            [0, 0, 0, 0, 0, 0],
+        ]
+    )
     print(graph)
     print(maximum_flow(graph, 0, 5).flow_value)
     print(maximum_flow(graph, 0, 5).residual)
@@ -316,4 +352,6 @@ def scipy_maximunflow():
     #     graph, perm_type='column'))  # scipy1.4.1はバグあり
     # ans = [(i, x)
     #        for i, x in enumerate(maximum_bipartite_matching(graph, perm_type='column')) if x >= 0]
+
+
 # scipy_maximunflow()
