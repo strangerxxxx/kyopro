@@ -45,6 +45,3 @@ class BIT:
         if j is None:
             return self.el[i]
         return self.sum(j) - self.sum(i)
-
-
-print(inversion_num([16, 6, 15, 10, 18, 13, 17, 11]))
