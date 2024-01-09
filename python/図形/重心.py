@@ -6,3 +6,10 @@ def center_of_gravity(l):
         for i, q in enumerate(p):
             res[i] += q
     return [x / n for x in res]
+
+
+def move_gravity(l):
+    g = center_of_gravity(l)
+    for i in enumerate(g):
+        for j, k in enumerate(i):
+            l[j] -= k
