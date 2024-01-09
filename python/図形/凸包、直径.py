@@ -1,4 +1,5 @@
 def convex_hull(ps: list, psIsSorted=False):
+    # 凸包、反時計回り
     def cross3(a, b, c):
         return (b[0] - a[0]) * (c[1] - a[1]) - (b[1] - a[1]) * (c[0] - a[0])
 
@@ -17,6 +18,44 @@ def convex_hull(ps: list, psIsSorted=False):
             res.pop()
         res.append(p)
     return res
+
+
+def polygon_disconpose(ps):
+    """凸包(反時計回り)の分解
+    左辺、右辺、下側、上側を返す"""
+
+    def _slice(l, r):
+        if l % n < r % n:
+            return ps[l:r]
+        return ps[l:] + ps[:r]
+
+    n = len(ps)
+    l = min(x[0] for x in ps)
+    r = max(x[0] for x in ps)
+    index = -n
+    if ps[0][0] == l:
+        llindex = 0
+        while ps[llindex - 1][0] == l:
+            llindex -= 1
+    else:
+        while ps[index][0] > l:
+            index += 1
+        llindex = index
+    while ps[index + 1][0] == l:
+        index += 1
+    lrindex = index
+    while ps[index][0] < r:
+        index += 1
+    rlindex = index
+    while ps[index + 1][0] == r:
+        index += 1
+    rrindex = index
+    return (
+        _slice(llindex, lrindex + 1),
+        _slice(rlindex, rrindex + 1),
+        _slice(lrindex, rlindex + 1),
+        _slice(rrindex, llindex + 1),
+    )
 
 
 def rotating_calipers(ps, psIsSorted=False):
