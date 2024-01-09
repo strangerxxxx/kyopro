@@ -6,6 +6,7 @@ def distance(a, b) -> float:
 def euclidean_scipy(a, b) -> float:
     # 2点間のユークリッド距離
     from scipy.spatial.distance import euclidean
+
     return euclidean(a, b)
 
 
@@ -17,10 +18,12 @@ def manhattan_distance(a, b) -> int:
 def manhattan_scipy(a, b) -> int:
     # 2点間のマンハッタン距離(Scipy)
     from scipy.spatial.distance import cityblock
+
     return cityblock(a, b)
 
 
 def euclidean_numpy(a, b) -> float:
     # Numpy編 np.arrayがinput マンハッタン距離はord=1
     from numpy.linalg import norm
+
     return norm(a - b)
