@@ -31,13 +31,20 @@ const double EPS = 1e-10;
 // const double PI = numbers::pi;
 const int dx[4] = {1, 0, -1, 0};
 const int dy[4] = {0, 1, 0, -1};
-#define REP(i, end) for (ll i : views::iota(0, end))
-#define REP3(i, begin, end) for (ll i : views::iota(begin, end))
-#define REP4(i, m, n, d) for (ll i = (m); i < (ll)(n); i = i + (ll)(d))
-#define REPR(i, end) for (ll i : views::iota(0, end) | views::reverse)
+#define REP(i, end) for (ll i : views::iota(0, (end)))
+#define REP3(i, begin, end) for (ll i : views::iota((begin), (end)))
+#define REP4(i, begin, end, step)                                \
+    for (ll i :                                                  \
+         views::iota(0, ((end) - (begin) + (step)-1) / (step)) | \
+             views::transform([](ll x) { return x * (step) + (begin); }))
+#define REPR(i, end) for (ll i : views::iota(0, (end)) | views::reverse)
 #define REP3R(i, begin, end) \
-    for (ll i : views::iota(begin, end) | views::reverse)
-#define REP4R(i, m, n, d) for (ll i = (m); i > (ll)(n); i = i + (ll)(d))
+    for (ll i : views::iota((begin), (end)) | views::reverse)
+#define REP4R(i, begin, end, step)                                      \
+    for (ll i : views::iota(0, ((end) - (begin) + (step)-1) / (step)) | \
+                    views::reverse | views::transform([](ll x) {        \
+                        return x * (step) + (begin);                    \
+                    }))
 #define REPA(i, I) for (const auto &i : I)
 #define REPAR(i, I) for (const auto &i : I | views::reverse)
 #define REPB(i, I) for (auto &&i : I)
