@@ -121,18 +121,15 @@ class Combination:
 
     def make_modinv_list(self, n):
         # 0からnまでのmod逆元のリスト
-        modinv = [0] * (n + 1)
-        modinv[1] = 1
+        modinv = [0, 1] + [0] * (n - 1)
         for i in range(2, n + 1):
             modinv[i] = self.mod - self.mod // i * modinv[self.mod % i] % self.mod
         return modinv
 
     def make_factorial_list(self, n):
         # 階乗のリストと階乗のmod逆元のリスト
-        fac = [None] * (n + 1)
-        fac[0] = 1
-        facinv = [None] * (n + 1)
-        facinv[0] = 1
+        fac = [1] + [0] * n
+        facinv = [1] + [0] * n
         for i in range(1, n + 1):
             fac[i] = fac[i - 1] * i % self.mod
             facinv[i] = facinv[i - 1] * self.modinv[i] % self.mod
@@ -159,18 +156,15 @@ class Permutation:
 
     def make_modinv_list(self, n):
         # 0からnまでのmod逆元のリスト
-        modinv = [0] * (n + 1)
-        modinv[1] = 1
+        modinv = [0, 1] + [0] * (n - 1)
         for i in range(2, n + 1):
             modinv[i] = self.mod - self.mod // i * modinv[self.mod % i] % self.mod
         return modinv
 
     def make_factorial_list(self, n):
         # 階乗のリストと階乗のmod逆元のリスト
-        fac = [None] * (n + 1)
-        fac[0] = 1
-        facinv = [None] * (n + 1)
-        facinv[0] = 1
+        fac = [1] + [0] * n
+        facinv = [1] + [0] * n
         for i in range(1, n + 1):
             fac[i] = fac[i - 1] * i % self.mod
             facinv[i] = facinv[i - 1] * self.modinv[i] % self.mod
@@ -223,18 +217,15 @@ class Combinatorics:
 
     def make_modinv_list(self, n):
         # 0からnまでのmod逆元のリスト
-        modinv = [0] * (n + 1)
-        modinv[1] = 1
+        modinv = [0, 1] + [0] * (n - 1)
         for i in range(2, n + 1):
             modinv[i] = self.mod - self.mod // i * modinv[self.mod % i] % self.mod
         return modinv
 
     def make_factorial_list(self, n):
         # 階乗のリストと階乗のmod逆元のリスト
-        fac = [None] * (n + 1)
-        fac[0] = 1
-        facinv = [None] * (n + 1)
-        facinv[0] = 1
+        fac = [1] + [0] * n
+        facinv = [1] + [0] * n
         for i in range(1, n + 1):
             fac[i] = fac[i - 1] * i % self.mod
             facinv[i] = facinv[i - 1] * self.modinv[i] % self.mod
@@ -242,6 +233,8 @@ class Combinatorics:
 
 
 class BinomialCoefficient:
+    # 任意mod二項係数
+    # 前計算O(nlogm/loglogm+m), クエリO(lognlogm/loglogm)
     def __init__(self, m):
         self.MOD = m
         self.factorization = self._factorize(m)
