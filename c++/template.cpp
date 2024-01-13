@@ -1,8 +1,8 @@
 #pragma region header
+/*Pythonで提出してない？*/
 #ifdef STRANGERXXX
 #define _GLIBCXX_DEBUG
 #endif
-/*Pythonで提出してない？*/
 // #pragma GCC target("avx2")
 #pragma GCC optimize("O3")
 #pragma GCC optimize("unroll-loops")
@@ -16,21 +16,21 @@ using mint = modint998244353;
 // #include <boost/multiprecision/cpp_int.hpp>
 // using namespace boost::multiprecision;
 typedef long long ll;
-const ll MOD = 998244353;
+constexpr ll MOD = 998244353;
 typedef unsigned int uint;
 typedef unsigned long long ull;
-clock_t STARTTIME = clock();
+const clock_t STARTTIME = clock();
 #define TIME() static_cast<double>(clock() - STARTTIME) / CLOCKS_PER_SEC * 1.0
-const int INF32 = INT_MAX;
-const int IINF32 = INT_MIN;
-const uint UINF32 = UINT_MAX;
-const long long INF64 = LLONG_MAX;
-const long long IINF64 = LLONG_MIN;
-const unsigned long long UINF64 = ULLONG_MAX;
-const double EPS = 1e-10;
-// const double PI = numbers::pi;
-const int dx[4] = {1, 0, -1, 0};
-const int dy[4] = {0, 1, 0, -1};
+constexpr int INF32 = INT_MAX;
+constexpr int IINF32 = INT_MIN;
+constexpr uint UINF32 = UINT_MAX;
+constexpr long long INF64 = LLONG_MAX;
+constexpr long long IINF64 = LLONG_MIN;
+constexpr unsigned long long UINF64 = ULLONG_MAX;
+constexpr double EPS = 1e-10;
+// constexpr double PI = numbers::pi;
+constexpr int dx[4] = {1, 0, -1, 0};
+constexpr int dy[4] = {0, 1, 0, -1};
 #define REP(i, end) for (ll i : views::iota(0, (end)))
 #define REP3(i, begin, end) for (ll i : views::iota((begin), (end)))
 #define REP4(i, begin, end, step)                                \
@@ -55,7 +55,7 @@ const int dy[4] = {0, 1, 0, -1};
     for (auto &&i : a) { \
         cin >> i;        \
     }
-#define LEN(x) x.size()
+#define LEN(x) ssize(x)
 typedef pair<ll, ll> PII;
 typedef vector<ll> VI;
 typedef vector<VI> VVI;
@@ -87,8 +87,7 @@ mt19937_64 mt64(seed_gen());
 #define RSORT(V) ranges::sort(V, ranges::greater());
 #define REVERSE(V) ranges::reverse(V)
 #define MINMAX(a, b) ranges::minmax(a, b)
-#define mod(a, b) ((ll)a % (ll)b + (ll)b) % (ll)b
-#define ctoll(c) (ll) c - 48
+#define mod(a, b) ((a) % (b) + (b)) % (b)
 #define MAXVI(V) *ranges::max_element(V)
 #define MINVI(V) *ranges::min_element(V)
 #define UB(V, x) ranges::upper_bound(V, x)
