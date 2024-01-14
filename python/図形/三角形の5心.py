@@ -1,4 +1,3 @@
-
 def distance(pa, pb):
     return sum([(i - j) ** 2 for i, j in zip(pa, pb)]) ** 0.5
 
@@ -26,7 +25,7 @@ def sin_a(a, b, c):
 
 def cos_a(a, b, c):
     # cos∠BAC
-    return max(min((b ** 2 + c ** 2 - a ** 2) / (2 * b * c), 1), -1)
+    return max(min((b**2 + c**2 - a**2) / (2 * b * c), 1), -1)
 
 
 def sin_o(pa, pb):
@@ -63,7 +62,7 @@ def barycentric_coordinate(pa, pb, pc, ga, gb, gc, ignore=False):
         if ignore:
             return []
         else:
-            raise ValueError('points on a straight line')
+            raise ValueError("points on a straight line")
 
 
 def incenter(pa, pb, pc, ignore=False):
@@ -76,16 +75,21 @@ def circumcenter(pa, pb, pc, ignore=False):
     # 外心
     a, b, c = side_length(pa, pb, pc)
     try:
-        return barycentric_coordinate(pa, pb, pc,
-                                      sin_a(a, b, c) * cos_a(a, b, c),
-                                      sin_a(b, c, a) * cos_a(b, c, a),
-                                      sin_a(c, a, b) * cos_a(c, a, b), ignore)
+        return barycentric_coordinate(
+            pa,
+            pb,
+            pc,
+            sin_a(a, b, c) * cos_a(a, b, c),
+            sin_a(b, c, a) * cos_a(b, c, a),
+            sin_a(c, a, b) * cos_a(c, a, b),
+            ignore,
+        )
 
     except:
         if ignore:
             return []
         else:
-            raise ValueError('points on a straight line')
+            raise ValueError("points on a straight line")
 
 
 def centergravity(pa, pb, pc, ignore=False):
@@ -97,34 +101,27 @@ def orthocenter(pa, pb, pc, ignore=False):
     # 垂心
     a, b, c = side_length(pa, pb, pc)
     try:
-        return barycentric_coordinate(pa, pb, pc,
-                                      sin_a(a, b, c) / cos_a(a, b, c),
-                                      sin_a(b, c, a) / cos_a(b, c, a),
-                                      sin_a(c, a, b) / cos_a(c, a, b), ignore)
+        return barycentric_coordinate(
+            pa,
+            pb,
+            pc,
+            sin_a(a, b, c) / cos_a(a, b, c),
+            sin_a(b, c, a) / cos_a(b, c, a),
+            sin_a(c, a, b) / cos_a(c, a, b),
+            ignore,
+        )
     except:
         if ignore:
             return []
         else:
-            raise ValueError('points on a straight line')
+            raise ValueError("points on a straight line")
 
 
 def excenter(pa, pb, pc, ignore=False):
     # 傍心
     a, b, c = side_length(pa, pb, pc)
-    return (barycentric_coordinate(pa, pb, pc, -a, b, c, ignore),
-            barycentric_coordinate(pa, pb, pc, a, -b, c, ignore),
-            barycentric_coordinate(pa, pb, pc, a, b, -c, ignore))
-
-
-# x = (12, 18), (390, 18), (102, 138)
-x = (154, 26), (158, 72), (168, 187)
-print('内心', incenter(*x, ignore=True))
-print('外心', circumcenter(*x, ignore=True))
-print('重心', centergravity(*x, ignore=True))
-print('垂心', orthocenter(*x, ignore=True))
-print('傍心', excenter(*x, ignore=True))
-pa, pb, pc = x
-a, b, c = side_length(pa, pb, pc)
-print(cos_a(a, b, c))
-print(cos_a(b, c, a))
-print(cos_a(c, a, b))
+    return (
+        barycentric_coordinate(pa, pb, pc, -a, b, c, ignore),
+        barycentric_coordinate(pa, pb, pc, a, -b, c, ignore),
+        barycentric_coordinate(pa, pb, pc, a, b, -c, ignore),
+    )
