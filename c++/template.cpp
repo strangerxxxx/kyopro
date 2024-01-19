@@ -81,7 +81,6 @@ struct custom_hash {
         return splitmix64(x + FIXED_RANDOM);
     }
 };
-#define LEN(x) ssize(x)
 typedef pair<ll, ll> PII;
 typedef vector<ll> VI;
 typedef vector<VI> VVI;
@@ -108,10 +107,11 @@ mt19937_64 mt64(seed_gen());
 #define mt make_tuple
 #define endl '\n'
 #define ALL(V) (V).begin(), (V).end()
-#define SUM(V) reduce((V).begin(), (V).end(), 0LL)
+#define SUM(V) reduce((V).begin(), (V).end())
 #if __cplusplus >= 201707L
+#define LEN(x) ssize(x)
 #define SORT(V) ranges::sort(V)
-#define RSORT(V) ranges::sort(V, ranges::greater());
+#define RSORT(V) ranges::sort(V, ranges::greater())
 #define REVERSE(V) ranges::reverse(V)
 #define MINMAX(a, b) ranges::minmax(a, b)
 #define MAXVI(V) *ranges::max_element(V)
@@ -122,6 +122,11 @@ mt19937_64 mt64(seed_gen());
 #define bisect_right(V, x) ranges::upper_bound(V, x) - (V).begin()
 #define BS(V, x) ranges::binary_search(V, x)
 #define IN(V, x) (V).contains(x)
+#else
+#define LEN(x) (int)(x).size()
+#define SORT(V) sort((V).begin(), (V).end())
+#define RSORT(V) sort((V).rbegin(), (V).rend())
+#define IN(V, x) (bool)(V).count(x)
 #endif
 #define mod(a, b) ((a) % (b) + (b)) % (b)
 #define MEMSET(v, h) memset((v), h, sizeof(v))
