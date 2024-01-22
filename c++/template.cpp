@@ -38,7 +38,6 @@ constexpr long long INF64 = LLONG_MAX;
 constexpr long long IINF64 = LLONG_MIN;
 constexpr unsigned long long UINF64 = ULLONG_MAX;
 constexpr double EPS = 1e-10;
-// constexpr double PI = numbers::pi;
 constexpr int dx[4] = {1, 0, -1, 0};
 constexpr int dy[4] = {0, 1, 0, -1};
 #if __cplusplus >= 201707L
@@ -122,11 +121,13 @@ mt19937_64 mt64(seed_gen());
 #define bisect_right(V, x) ranges::upper_bound(V, x) - (V).begin()
 #define BS(V, x) ranges::binary_search(V, x)
 #define IN(V, x) (V).contains(x)
+constexpr double PI = numbers::pi;
 #else
 #define LEN(x) (int)(x).size()
 #define SORT(V) sort((V).begin(), (V).end())
 #define RSORT(V) sort((V).rbegin(), (V).rend())
 #define IN(V, x) (bool)(V).count(x)
+constexpr double PI = 3.141592653589793238462643383;
 #endif
 #define mod(a, b) ((a) % (b) + (b)) % (b)
 #define MEMSET(v, h) memset((v), h, sizeof(v))
