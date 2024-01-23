@@ -2,6 +2,9 @@
 /*Pythonで提出してない？*/
 #ifdef STRANGERXXX
 #define _GLIBCXX_DEBUG
+#define DEBUG(x) print(x)
+#else
+#define DEBUG(x)
 #endif
 #ifdef ATCODER
 #pragma GCC target("arch=skylake-avx512")
@@ -95,11 +98,6 @@ typedef unordered_map<ll, ll, custom_hash> UMI;
 typedef priority_queue<ll> PQ;
 typedef priority_queue<ll, VI, greater<ll>> RPQ;
 typedef deque<ll> DQ;
-random_device seed_gen;
-mt19937 mt(seed_gen());
-mt19937_64 mt64(seed_gen());
-// #define RANDINT() mt64()
-// #define RAND() (double)mt64() / UINF64
 #define pb push_back
 #define eb emplace_back
 #define mp make_pair
@@ -222,6 +220,23 @@ ostream &operator<<(ostream &os, const pair<T1, T2> &p) {
     cout << p.first << " " << p.second;
     return os;
 }
+template <class T>
+ostream &operator<<(ostream &os, const vector<T> &V) {
+    for (int i = 0; i < (int)V.size(); i++) {
+        cout << (i == 0 ? "" : " ") << V[i];
+    }
+    return os;
+}
+template <class T>
+ostream &operator<<(ostream &os, const vector<vector<T>> &V) {
+    for (int i = 0; i < (int)V.size(); i++) {
+        if (i > 0) {
+            cout << endl;
+        }
+        cout << V[i];
+    }
+    return os;
+}
 void print() { cout << endl; }
 template <class T, class... A>
 void print(const T &first, const A &...rest) {
@@ -235,19 +250,6 @@ void print(const T &first, const A &...rest) {
 template <class... A>
 void print(const A &...rest) {
     print(rest...);
-}
-template <typename T>
-void print(const vector<T> &V) {
-    for (int i = 0; i < (int)V.size(); i++) {
-        cout << (i == 0 ? "" : " ") << V[i];
-    }
-    cout << endl;
-}
-template <typename T>
-void print(const vector<vector<T>> &V) {
-    for (const auto &i : V) {
-        print(i);
-    }
 }
 template <class T>
 vector<pair<ll, T>> enumerate(const vector<T> &a, ll start = 0, ll step = 1) {
@@ -264,14 +266,24 @@ PII divmod(ll a, ll b) {
     ll m = mod(a, b);
     return make_pair((a - m) / b, m);
 }
-uint32_t XORShiftRandom() {
-    static uint32_t y = 2463534241;
-    y = y ^ (y << 13);
-    y = y ^ (y >> 17);
-    return y = y ^ (y << 5);
+unsigned int XORShiftRandom() {
+    static unsigned int x = 123456789, y = 362436069, z = 521288629,
+                        w = 88675123;
+    unsigned int t = (x ^ (x << 11));
+    x = y;
+    y = z;
+    z = w;
+    return (w = (w ^ (w >> 19)) ^ (t ^ (t >> 8)));
 }
+// random_device seed_gen;
+// mt19937 mt(seed_gen());
+// mt19937_64 mt64(seed_gen());
+// #define RANDINT() mt64()
+// #define RANDRANGE(x) mt64() % (x)
+// #define RANDOM() mt64() / double(ULLONG_MAX)
 #define RANDINT() XORShiftRandom()
-#define RAND() (double)XORShiftRandom() / UINF32
+#define RANDRANGE(x) XORShiftRandom() % (x)
+#define RANDOM() XORShiftRandom() / double(UINT_MAX)
 #pragma endregion
 int main() {
     cin.tie(nullptr);
