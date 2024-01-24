@@ -9,10 +9,9 @@ from testcase_create import createcase
 
 class TestClass(unittest.TestCase):
     def assertIO(self):
-        stdout, stdin = sys.stdout, sys.stdin
         starttime = perf_counter()
-        timelimit = 10
-        while perf_counter() - starttime < timelimit:
+        limit = 10
+        while perf_counter() - starttime < limit:
             sys.stdout, sys.stdin = StringIO(), StringIO()
             createcase()
             sys.stdout.seek(0)
@@ -22,7 +21,10 @@ class TestClass(unittest.TestCase):
             sys.stdout.seek(0)
             out = sys.stdout.read()
             sys.stdout, sys.stdin = StringIO(), StringIO(out)
-            self.assertTrue(verify(), "error input is {}".format(input))
+            self.assertTrue(verify(), f"error \ninput is \n'{input}'")
+            # インプットとアウトプットを両方入力させるときはこちら
+            # sys.stdout, sys.stdin = StringIO(), StringIO(input + out)
+            # self.assertTrue(verify(), f"error input is \n'{input}', output is \n'{out}'")
 
     def test_1(self):
         self.assertIO()
