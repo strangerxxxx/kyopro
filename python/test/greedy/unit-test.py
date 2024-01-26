@@ -26,7 +26,11 @@ class TestClass(unittest.TestCase):
             sys.stdout.seek(0)
             out2 = sys.stdout.read()
             sys.stdout, sys.stdin = stdout, stdin
-            self.assertEqual(out1, out2, "error input is {}".format(input))
+            self.assertEqual(
+                out1,
+                out2,
+                f"error \ninput is \n'{input}'\noutput of greedy method is \n'{out1}'\noutput of testcode is \n'{out2}'",
+            )
 
     def test_1(self):
         self.assertIO()
