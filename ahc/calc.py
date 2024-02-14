@@ -6,7 +6,7 @@ def main():
     # filepath = os.path.join(os.path.dirname(__file__), "out2.txt")
     scorepath = os.path.join(os.path.dirname(__file__), r"score", "*")
     scores = []
-    maxtime = sumtime = 0
+    maxtime = sumtime = 0.0
     cnt = 0
     for i in glob.glob(scorepath):
         with open(i, "r", encoding="utf-8", errors="ignore") as f:
@@ -22,8 +22,9 @@ def main():
 
     print("{:,}".format(sum(scores)))
     print("Sum Score =", "{:,}".format(sum(scores)), file=sys.stderr)
-    print("Max Time =", maxtime, file=sys.stderr)
-    print("Average Time =", sumtime / max(cnt, 1), file=sys.stderr)
+    if cnt:
+        print("Max Time =", maxtime, file=sys.stderr)
+        print("Average Time =", sumtime / cnt, file=sys.stderr)
 
 
 if __name__ == "__main__":
