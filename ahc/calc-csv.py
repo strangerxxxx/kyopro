@@ -9,7 +9,7 @@ def main():
     maxtime = sumtime = 0
     cnt = 0
     for i in glob.glob(scorepath):
-        with open(i, "r", encoding="utf-8") as f:
+        with open(i, "r", encoding="utf-8", errors="ignore") as f:
             for line in f.readlines():
                 if line.startswith("Score"):
                     x = line.rstrip()[8:]
