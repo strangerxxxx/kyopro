@@ -9,7 +9,7 @@ class UnionFind_value:
         self.values[parent] += self.values[child]
 
     def get_value(self, x: int):
-        return self.values[x]
+        return self.values[self.find(x)]
 
     def set_value(self, x: int, v: int):
         self.values[self.find(x)] = v
