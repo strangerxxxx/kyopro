@@ -14,6 +14,9 @@ class UnionFind_value:
     def set_value(self, x: int, v: int):
         self.values[self.find(x)] = v
 
+    def add_value(self, x: int, v: int):
+        self.values[self.find(x)] += v
+
     def find(self, x: int) -> int:
         if self.parent[x] < 0:
             return x
