@@ -1,0 +1,799 @@
+{
+	// Place your snippets for python here. Each snippet is defined under a snippet name and has a prefix, body and 
+	// description. The prefix is what is used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. Placeholders with the 
+	// same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"prefix": ["log"],
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+	"ifmain": {
+		"prefix": [
+			"ifmain",
+		],
+		"body": [
+			"def main():",
+			"    ${1:pass}",
+			"",
+			"if __name__ == '__main__':",
+			"    main()",
+		]
+	},
+	"resolve": {
+		"prefix": [
+			"resolve",
+		],
+		"body": [
+			"def resolve():",
+			"    ${1:pass}",
+			"",
+			"if __name__ == '__main__':",
+			"    resolve()",
+		]
+	},
+	"for i in range()": {
+		"prefix": [
+			"fori",
+		],
+		"body": [
+			"for i in range(${1:n}):",
+			"    ${2:pass}",
+		]
+	},
+	"for j in range()": {
+		"prefix": [
+			"forj",
+		],
+		"body": [
+			"for j in range(${1:n}):",
+			"    ${2:pass}",
+		]
+	},
+	"for k in range()": {
+		"prefix": [
+			"fork",
+		],
+		"body": [
+			"for k in range(${1:n}):",
+			"    ${2:pass}",
+		]
+	},
+	"for i in range() for j in range()": {
+		"prefix": [
+			"forij",
+		],
+		"body": [
+			"for ${1:i} in range(${2:n}):",
+			"    for ${3:j} in range(${4:i}):",
+			"        ${5:pass}",
+		]
+	},
+	"for i in range() for j in range() for k in range()": {
+		"prefix": [
+			"forijk",
+		],
+		"body": [
+			"for ${1:i} in range(${2:n}):",
+			"    for ${3:j} in range(${4:i}):",
+			"        for ${5:k} in range(${6:j}):",
+			"            ${7:pass}",
+		]
+	},
+	"for i in a": {
+		"prefix": [
+			"fora",
+		],
+		"body": [
+			"for ${1:i} in ${2:a}:",
+			"    ${3:pass}",
+		]
+	},
+	"for _ in range()": {
+		"prefix": [
+			"for_",
+		],
+		"body": [
+			"for _ in range(${1:n}):",
+			"    ${2:pass}",
+		]
+	},
+	"for _ one liner": {
+		"prefix": [
+			"for__",
+		],
+		"body": [
+			"for _ in range(${1:n})",
+		]
+	},
+	"xforx": {
+		"prefix": [
+			"xforx",
+		],
+		"body": [
+			"[${1:x} for ${2:x} in range(${3:n})]",
+		]
+	},
+	"input = sys.stdin.readline": {
+		"prefix": [
+			"input",
+		],
+		"body": [
+			"import sys",
+			"input = sys.stdin.readline",
+		]
+	},
+	"read = sys.stdin.read": {
+		"prefix": [
+			"read",
+		],
+		"body": [
+			"read = sys.stdin.read",
+		]
+	},
+	"readlines = sys.stdin.readlines": {
+		"prefix": [
+			"readlines",
+		],
+		"body": [
+			"readlines = sys.stdin.readlines",
+		]
+	},
+	"input()": {
+		"prefix": [
+			"input",
+		],
+		"body": [
+			"input()",
+		]
+	},
+	"input().rstrip()": {
+		"prefix": [
+			"input.rstrip",
+		],
+		"body": [
+			"input().rstrip()",
+		]
+	},
+	"int(input())": {
+		"prefix": [
+			"intinput",
+		],
+		"body": [
+			"int(input())",
+		]
+	},
+	"mapint": {
+		"prefix": [
+			"mapint",
+		],
+		"body": [
+			"map(int, input().split())",
+		]
+	},
+	"sortedmapint": {
+		"prefix": [
+			"sortedmapint",
+		],
+		"body": [
+			"sorted(map(int, input().split()))",
+		]
+	},
+	"list()": {
+		"prefix": [
+			"list",
+		],
+		"body": [
+			"list($1)",
+		]
+	},
+	"tuple()": {
+		"prefix": [
+			"tuple",
+		],
+		"body": [
+			"tuple($1)",
+		]
+	},
+	"set()": {
+		"prefix": [
+			"set",
+		],
+		"body": [
+			"set($1)",
+		]
+	},
+	"dict()": {
+		"prefix": [
+			"dict",
+		],
+		"body": [
+			"dict($1)",
+		]
+	},
+	"range()": {
+		"prefix": [
+			"range",
+		],
+		"body": [
+			"range(${1:n})",
+		]
+	},
+	"list(map(int, input().split()))": {
+		"prefix": [
+			"listmapint",
+		],
+		"body": [
+			"list(map(int, input().split()))",
+		]
+	},
+	"map(lambda x:int(x) - 1, input().split())": {
+		"prefix": [
+			"minusmapint",
+			"mapminusint",
+		],
+		"body": [
+			"map(lambda x:int(x) - 1, input().split())",
+		]
+	},
+	"list(map(lambda x:int(x) - 1, input().split()))": {
+		"prefix": [
+			"minuslistint",
+			"listminusint",
+		],
+		"body": [
+			"list(map(lambda x:int(x) - 1, input().split()))",
+		]
+	},
+	"tuple(map(int, input().split()))": {
+		"prefix": [
+			"tuplemapint",
+		],
+		"body": [
+			"tuple(map(int, input().split()))",
+		]
+	},
+	"tuple(map(lambda x:int(x) - 1, input().split()))": {
+		"prefix": [
+			"minustupleint",
+			"tupleminusint",
+		],
+		"body": [
+			"tuple(map(lambda x:int(x) - 1, input().split()))",
+		]
+	},
+	"[list(map(int, input().split())) for _ in range()]": {
+		"prefix": [
+			"listintfor",
+		],
+		"body": [
+			"[list(map(int, input().split())) for _ in range(${1:n})]",
+		]
+	},
+	"[[x - 1 for x in map(int, input().split())] for _ in range()]": {
+		"prefix": [
+			"listminusintfor",
+		],
+		"body": [
+			"[[x - 1 for x in map(int, input().split())] for _ in range(${1:n})]",
+		]
+	},
+	"[tuple(map(int, input().split())) for _ in range()]": {
+		"prefix": [
+			"tupleintfor",
+		],
+		"body": [
+			"[tuple(map(int, input().split())) for _ in range(${1:n})]",
+		]
+	},
+	"[input().rstrip() for _ in range()]": {
+		"prefix": [
+			"listinputfor",
+		],
+		"body": [
+			"[input().rstrip() for _ in range(${1:n})]",
+		]
+	},
+	"[[] for _ in range()]": {
+		"prefix": [
+			"edges",
+			"[[]]",
+		],
+		"body": [
+			"[[] for _ in range(${1:n})]",
+		]
+	},
+	"print()": {
+		"prefix": [
+			"print",
+		],
+		"body": [
+			"print($1)",
+		]
+	},
+	"sorted()": {
+		"prefix": [
+			"sorted()",
+		],
+		"body": [
+			"sorted($1)",
+		]
+	},
+	"import itertools": {
+		"prefix": [
+			"itertools",
+		],
+		"body": [
+			"import itertools",
+		]
+	},
+	"import more_itertools": {
+		"prefix": [
+			"more_itertools",
+		],
+		"body": [
+			"import more_itertools",
+		]
+	},
+	"itertools.accumulate": {
+		"prefix": [
+			"accumulate",
+		],
+		"body": [
+			"itertools.accumulate(${1:p})",
+		]
+	},
+	"itertools.product": {
+		"prefix": [
+			"product",
+		],
+		"body": [
+			"itertools.product(${1:p}, repeat=${2:n})",
+		]
+	},
+	"itertools.permutations": {
+		"prefix": [
+			"permutations",
+		],
+		"body": [
+			"itertools.permutations(${1:p}, r=${2:None})",
+		]
+	},
+	"itertools.combinations": {
+		"prefix": [
+			"combinations",
+		],
+		"body": [
+			"itertools.combinations(${1:p}, ${2:r})",
+		]
+	},
+	"itertools.combinations_with_replacement": {
+		"prefix": [
+			"combinations_with_replacement",
+		],
+		"body": [
+			"itertools.combinations_with_replacement(${1:p}, ${2:r})",
+		]
+	},
+	"from collections import defaultdict": {
+		"prefix": [
+			"defaultdict",
+		],
+		"body": [
+			"from collections import defaultdict",
+		]
+	},
+	"defaultdict()": {
+		"prefix": [
+			"defaultdict",
+		],
+		"body": [
+			"defaultdict(${1:int})",
+		]
+	},
+	"from collections import deque": {
+		"prefix": [
+			"deque",
+		],
+		"body": [
+			"from collections import deque",
+		]
+	},
+	"from collections import Counter": {
+		"prefix": [
+			"Counter",
+		],
+		"body": [
+			"from collections import Counter",
+		]
+	},
+	"from copy import deepcopy": {
+		"prefix": [
+			"deepcopy",
+		],
+		"body": [
+			"from copy import deepcopy",
+		]
+	},
+	"from time import perf_counter": {
+		"prefix": [
+			"time",
+		],
+		"body": [
+			"from time import perf_counter",
+		]
+	},
+	"import numpy": {
+		"prefix": [
+			"numpy",
+			"np",
+		],
+		"body": [
+			"import numpy as np",
+		]
+	},
+	"import scipy": {
+		"prefix": [
+			"scipy",
+		],
+		"body": [
+			"import scipy",
+		]
+	},
+	"cache": {
+		"prefix": [
+			"cache",
+		],
+		"body": [
+			"from functools import cache",
+			"",
+			"@cache",
+		]
+	},
+	"sys.setrecursionlimit": {
+		"prefix": [
+			"setrecursionlimit",
+		],
+		"body": [
+			"import sys",
+			"sys.setrecursionlimit(${1:10 ** 8})",
+		]
+	},
+	"float('inf')": {
+		"prefix": [
+			"inf",
+		],
+		"body": [
+			"float('inf')",
+		]
+	},
+	"MOD998244353": {
+		"prefix": [
+			"MOD998244353",
+		],
+		"body": [
+			"MOD = ${1:998244353}",
+		]
+	},
+	"MOD1000000007": {
+		"prefix": [
+			"MOD1000000007",
+		],
+		"body": [
+			"MOD = ${1:1000000007}",
+		]
+	},
+	"hjkl": {
+		"prefix": [
+			"hjkl",
+		],
+		"body": [
+			"((1, 0), (0, 1), (0, -1), (-1, 0))",
+		]
+	},
+	"hjkl2": {
+		"prefix": [
+			"hjkl(diagonal)",
+		],
+		"body": [
+			"((1, 1), (1, -1), (-1, 1), (-1, -1))",
+		]
+	},
+	"hjkl3": {
+		"prefix": [
+			"hjkl(8-direction)",
+		],
+		"body": [
+			"((1, 1), (1, 0), (1, -1), (0, -1),",
+			" (0, 1), (-1, 1), (-1, 0), (-1, -1))",
+		]
+	},
+	"import heapq": {
+		"prefix": [
+			"heapq",
+		],
+		"body": [
+			"import heapq",
+		]
+	},
+	"heapq.heappush": {
+		"prefix": [
+			"heappush",
+		],
+		"body": [
+			"heapq.heappush(${1:q}, ${2:i})",
+		]
+	},
+	"heapq.heappop": {
+		"prefix": [
+			"heappop",
+		],
+		"body": [
+			"heapq.heappop(${1:q})",
+		]
+	},
+	"heapq.heapify": {
+		"prefix": [
+			"heapify",
+		],
+		"body": [
+			"heapq.heapify(${1:q})",
+		]
+	},
+	"heapq.heappushpop": {
+		"prefix": [
+			"heappushpop",
+		],
+		"body": [
+			"heapq.heappushpop(${1:q}, ${2:i})",
+		]
+	},
+	"heapq.heapreplace": {
+		"prefix": [
+			"heapreplace",
+		],
+		"body": [
+			"heapq.heapreplace(${1:q}, ${2:i})",
+		]
+	},
+	"import random": {
+		"prefix": [
+			"random",
+		],
+		"body": [
+			"import random",
+		]
+	},
+	"random.randint": {
+		"prefix": [
+			"randint",
+		],
+		"body": [
+			"random.randint(${1:0}, ${2:n - 1})",
+		]
+	},
+	"with open() as f": {
+		"prefix": [
+			"withopen",
+		],
+		"body": [
+			"with open(${1:path}, mode='${2:r}') as ${3:f}:",
+		]
+	},
+	"floatToStr": {
+		"prefix": [
+			"floatToStr",
+		],
+		"body": [
+			"def floatToStr(x: float):",
+			"    return f\"{x:.16f}\"",
+		]
+	},
+	"UnionFind": {
+		"prefix": [
+			"UnionFind",
+			"dsu",
+		],
+		"body": [
+			"class UnionFind:",
+			"    def __init__(self, n: int) -> None:",
+			"        self.n = n",
+			"        self.parent = [-1] * n",
+			"        self.groups = n",
+			"",
+			"    def find(self, x: int) -> int:",
+			"        if self.parent[x] < 0:",
+			"            return x",
+			"        p = x",
+			"        while self.parent[p] >= 0:",
+			"            p = self.parent[p]",
+			"        while self.parent[x] >= 0:",
+			"            self.parent[x], x = p, self.parent[x]",
+			"        return p",
+			"",
+			"    def union(self, x: int, y: int) -> bool:",
+			"        x = self.find(x)",
+			"        y = self.find(y)",
+			"        if x == y:",
+			"            return False",
+			"        if self.parent[x] > self.parent[y]:",
+			"            x, y = y, x",
+			"        self.parent[x] += self.parent[y]",
+			"        self.parent[y] = x",
+			"        self.groups -= 1",
+			"        return True",
+			"",
+			"    def size(self, x: int) -> int:",
+			"        return -self.parent[self.find(x)]",
+			"",
+			"    def same(self, x: int, y: int) -> bool:",
+			"        return self.find(x) == self.find(y)",
+			"",
+			"    def members(self, x: int) -> list:",
+			"        root = self.find(x)",
+			"        return [i for i in range(self.n) if self.find(i) == root]",
+			"",
+			"    def roots(self) -> list:",
+			"        return [i for i, x in enumerate(self.parent) if x < 0]",
+			"",
+			"    def group_count(self) -> int:",
+			"        return self.groups",
+			"",
+			"    def sizes(self) -> dict:",
+			"        return {i: -x for i, x in enumerate(self.parent) if x < 0}",
+			"",
+			"    def all_group_members(self) -> dict:",
+			"        from collections import defaultdict",
+			"",
+			"        d = defaultdict(list)",
+			"        for i in range(self.n):",
+			"            p = self.find(i)",
+			"            d[p].append(i)",
+			"        return d",
+			"",
+			"    def __str__(self) -> str:",
+			"        return \"\\n\".join(",
+			"            \"{}: {}\".format(k, v) for k, v in self.all_group_members().items()",
+			"        )",
+			"",
+			"    __repr__ = __str__",
+		]
+	},
+	"heap": {
+		"prefix": [
+			"heap",
+		],
+		"body": [
+			"import heapq",
+			"",
+			"",
+			"class Heap:",
+			"    def __init__(self, a=[]) -> None:",
+			"        self.q: list = a[:]",
+			"        heapq.heapify(self.q)",
+			"",
+			"    def pop(self):",
+			"        return heapq.heappop(self.q)",
+			"",
+			"    def push(self, item) -> None:",
+			"        heapq.heappush(self.q, item)",
+			"",
+			"    def top(self):",
+			"        return self.q[0]",
+			"",
+			"    def poppush(self, item):",
+			"        return heapq.heapreplace(self.q, item)",
+			"",
+			"    def pushpop(self, item):",
+			"        return heapq.heappushpop(self.q, item)",
+			"",
+			"    def __call__(self) -> list:",
+			"        return self.q",
+			"",
+			"    def __len__(self):",
+			"        return len(self.q)",
+			"",
+			"    def __bool__(self):",
+			"        return bool(self.q)",
+			"",
+			"    def __str__(self):",
+			"        return str(type(self)) + \"(\" + str(self.q) + \")\"",
+			"",
+			"    def __iter__(self):",
+			"        while self.q:",
+			"            yield self.pop()",
+		]
+	},
+	"popcount": {
+		"prefix": [
+			"popcount",
+		],
+		"body": [
+			"def popcount(n: int) -> int:",
+			"    c = (n & 0x5555555555555555) + ((n >> 1) & 0x5555555555555555)",
+			"    c = (c & 0x3333333333333333) + ((c >> 2) & 0x3333333333333333)",
+			"    c = (c & 0x0F0F0F0F0F0F0F0F) + ((c >> 4) & 0x0F0F0F0F0F0F0F0F)",
+			"    c = (c & 0x00FF00FF00FF00FF) + ((c >> 8) & 0x00FF00FF00FF00FF)",
+			"    c = (c & 0x0000FFFF0000FFFF) + ((c >> 16) & 0x0000FFFF0000FFFF)",
+			"    return (c & 0x00000000FFFFFFFF) + ((c >> 32) & 0x00000000FFFFFFFF)",
+		]
+	},
+	"transpose": {
+		"prefix": [
+			"transpose",
+		],
+		"body": [
+			"def transpose(x):",
+			"    return [y for y in zip(*x)]",
+		]
+	},
+	"rotate": {
+		"prefix": [
+			"rotate",
+		],
+		"body": [
+			"def rotate(x):",
+			"    return [y[::-1] for y in zip(*x)]",
+		]
+	},
+	"floor_sqrt": {
+		"prefix": [
+			"floor_sqrt",
+		],
+		"body": [
+			"def floor_sqrt(n: int, r: int = 2) -> int:",
+			"    x = int(n ** (1 / r))",
+			"    for i in range(x + 3, x - 4, -1):",
+			"        if i ** r <= n:",
+			"            return i",
+			"    raise ValueError",
+		]
+	},
+	"distance": {
+		"prefix": [
+			"distance",
+		],
+		"body": [
+			"def distance(a, b) -> float:",
+			"    return sum((i - j) ** 2 for i, j in zip(a, b)) ** 0.5",
+		]
+	},
+	"distance squared": {
+		"prefix": [
+			"distance2",
+		],
+		"body": [
+			"def distance(a, b) -> int:",
+			"    return sum((i - j) ** 2 for i, j in zip(a, b))",
+		]
+	},
+	"manhattan distance": {
+		"prefix": [
+			"manhattan_distance",
+		],
+		"body": [
+			"def manhattan_distance(a, b) -> int:",
+			"    return sum(abs(i - j) for i, j in zip(a, b))",
+		]
+	},
+	"sys.stderr": {
+		"prefix": [
+			"stderr",
+		],
+		"body": [
+			"sys.stderr",
+		]
+	},
+	"sys.argv": {
+		"prefix": [
+			"argv",
+		],
+		"body": [
+			"sys.argv",
+		]
+	},
+}
